@@ -39,10 +39,23 @@
     </div>
 
     <!-- Update Status Section (Empty for Now) -->
-    <div id="updateStatusSection" style="display: none;">
-        <p>Update status feature coming soon...</p>
+<!-- Update Status Section -->
+<div id="updateStatusSection" style="display: none;">
+    <div class="input-container">
+        <p><strong>Job Title:</strong> <input type="text" id="updateJobTitle" /></p>
+        <p><strong>Company Name:</strong> <input type="text" id="updateCompanyName" /></p>
+        <p><strong>Status:</strong>
+            <select id="updateStatus">
+                <option value="Applied">Applied</option>
+                <option value="Selected for Interview">Selected for Interview</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+        </p>
     </div>
-
+    <div class="button-container">
+        <button id="updateStatusButton">Update Status</button>
+    </div>
+</div>
     <script src="popup.js"></script>
 </body>
 </html>

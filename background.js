@@ -14,7 +14,7 @@ let jobData = {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "saveSelection") {
-        if (message.url === null && message.text !== null) { 
+        if (message.url === null && message.text !== null) {
             try {
                 const updatedData = JSON.parse(message.text);
                 jobData = { ...jobData, ...updatedData };
@@ -38,8 +38,35 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 sendResponse({ status: "error" });
             }
         });
+        return true; // Indicates that the response will be sent asynchronously
+    } else if (message.action === "updateStatus") {
+        updateStatusInSheets(message.jobTitle, message.companyName, message.status, (success) => {
+            if (success) {
+                sendResponse({ status: "success" });
+            } else {
+                sendResponse({ status: "error" });
+            }
+        });
+        return true; // Indicates that the response will be sent asynchronously
     }
 });
+
+function updateStatusInSheets(jobTitle, companyName, status, callback) {
+    fetch("https://script.google.com/macros/s/AKfycbyY5yFL08odSefDft4oqDDmw3MKt37I5xsPmZSEX8rj8f3JCVhuMVhpMWCg_MvltERXyQ/exec/updateStatus", {
+        method: "POST",
+        body: JSON.stringify({ jobTitle, companyName, status }),
+        headers: { "Content-Type": "application/json" }
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log("Status updated:", data);
+        callback(true); // Call the callback with success
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        callback(false); // Call the callback with failure
+    });
+}
 
 function processSelection(selectedText, url) {
     if (!jobData.jobTitle) {
@@ -79,7 +106,7 @@ function resetJobData() {
 }
 
 function saveToSheets(data, callback) {
-    fetch("MY_WEBAPP_URL", {
+    fetch("https://script.google.com/macros/s/AKfycbyY5yFL08odSefDft4oqDDmw3MKt37I5xsPmZSEX8rj8f3JCVhuMVhpMWCg_MvltERXyQ/exec", {
         method: "POST",
         body: JSON.stringify(data),
         headers: { "Content-Type": "application/json" }
