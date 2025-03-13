@@ -52,7 +52,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 function updateStatusInSheets(jobTitle, companyName, status, callback) {
-    fetch("https://script.google.com/macros/s/AKfycbyY5yFL08odSefDft4oqDDmw3MKt37I5xsPmZSEX8rj8f3JCVhuMVhpMWCg_MvltERXyQ/exec/updateStatus", {
+    fetch("MY_WEBAPP_URL/updateStatus", {
         method: "POST",
         body: JSON.stringify({ jobTitle, companyName, status }),
         headers: { "Content-Type": "application/json" }
@@ -106,7 +106,7 @@ function resetJobData() {
 }
 
 function saveToSheets(data, callback) {
-    fetch("https://script.google.com/macros/s/AKfycbyY5yFL08odSefDft4oqDDmw3MKt37I5xsPmZSEX8rj8f3JCVhuMVhpMWCg_MvltERXyQ/exec", {
+    fetch("MY_WEBAPP_URL", {
         method: "POST",
         body: JSON.stringify(data),
         headers: { "Content-Type": "application/json" }
