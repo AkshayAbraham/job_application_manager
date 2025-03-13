@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Job Application Saver",
+  "version": "1.0",
+  "description": "Save selected job details to Google Sheets with a hotkey.",
+  "permissions": ["scripting", "storage", "contextMenus", "activeTab"],
+  "host_permissions": ["https://*/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S"
+      },
+      "description": "Save selected text"
+    }
+  },
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

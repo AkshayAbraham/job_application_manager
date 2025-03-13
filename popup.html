@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Job Saver</title>
+    <link rel="stylesheet" href="popup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <h3>Job Saver</h3>
+    <div id="dataDisplay">
+        <div class="input-container">
+            <p><strong>Job Title:</strong> <input type="text" id="jobTitle" /></p>
+            <p><strong>Company Name:</strong> <input type="text" id="companyName" /></p>
+            <p><strong>Company Location:</strong> <input type="text" id="companyLocation" /></p>
+            <p><strong>Recruiter Name:</strong> <input type="text" id="recruiterName" /></p>
+            <p><strong>Recruiter LinkedIn:</strong> <input type="text" id="recruiterLinkedIn" /></p>
+            <p><strong>Recruiter Email:</strong> <input type="text" id="recruiterEmail" /></p>
+            <p><strong>Website:</strong> <input type="text" id="website" /></p>
+            <p><strong>Networking:</strong> <input type="text" id="networking" /></p>
+            <p><strong>Comments:</strong> <input type="text" id="comments" /></p>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <button id="saveButton" disabled>Save Selection</button>
+        <button id="sendButton" disabled>
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
