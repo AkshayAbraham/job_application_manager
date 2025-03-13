@@ -137,3 +137,17 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 document.querySelectorAll('#dataDisplay input').forEach(input => {
     input.addEventListener('input', checkEdits);
 });
+
+document.getElementById("addAppTab").addEventListener("click", function() {
+    document.getElementById("addApplicationSection").style.display = "block";
+    document.getElementById("updateStatusSection").style.display = "none";
+    this.classList.add("active");
+    document.getElementById("updateStatusTab").classList.remove("active");
+});
+
+document.getElementById("updateStatusTab").addEventListener("click", function() {
+    document.getElementById("addApplicationSection").style.display = "none";
+    document.getElementById("updateStatusSection").style.display = "block";
+    this.classList.add("active");
+    document.getElementById("addAppTab").classList.remove("active");
+});

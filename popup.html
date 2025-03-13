@@ -7,25 +7,40 @@
 </head>
 <body>
     <h3>Job Saver</h3>
-    <div id="dataDisplay">
-        <div class="input-container">
-            <p><strong>Job Title:</strong> <input type="text" id="jobTitle" /></p>
-            <p><strong>Company Name:</strong> <input type="text" id="companyName" /></p>
-            <p><strong>Company Location:</strong> <input type="text" id="companyLocation" /></p>
-            <p><strong>Recruiter Name:</strong> <input type="text" id="recruiterName" /></p>
-            <p><strong>Recruiter LinkedIn:</strong> <input type="text" id="recruiterLinkedIn" /></p>
-            <p><strong>Recruiter Email:</strong> <input type="text" id="recruiterEmail" /></p>
-            <p><strong>Website:</strong> <input type="text" id="website" /></p>
-            <p><strong>Networking:</strong> <input type="text" id="networking" /></p>
-            <p><strong>Comments:</strong> <input type="text" id="comments" /></p>
+
+    <!-- Tab navigation (text only, no buttons) -->
+    <div class="tabs-container">
+        <span id="addAppTab" class="tab active">Add Application</span>
+        <span id="updateStatusTab" class="tab">Update Status</span>
+    </div>
+
+    <!-- Add Application Section -->
+    <div id="addApplicationSection">
+        <div id="dataDisplay">
+            <div class="input-container">
+                <p><strong>Job Title:</strong> <input type="text" id="jobTitle" /></p>
+                <p><strong>Company Name:</strong> <input type="text" id="companyName" /></p>
+                <p><strong>Company Location:</strong> <input type="text" id="companyLocation" /></p>
+                <p><strong>Recruiter Name:</strong> <input type="text" id="recruiterName" /></p>
+                <p><strong>Recruiter LinkedIn:</strong> <input type="text" id="recruiterLinkedIn" /></p>
+                <p><strong>Recruiter Email:</strong> <input type="text" id="recruiterEmail" /></p>
+                <p><strong>Website:</strong> <input type="text" id="website" /></p>
+                <p><strong>Networking:</strong> <input type="text" id="networking" /></p>
+                <p><strong>Comments:</strong> <input type="text" id="comments" /></p>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button id="saveButton" disabled>Save Selection</button>
+            <button id="sendButton" disabled>
+                <i class="fas fa-paper-plane"></i>
+            </button>
         </div>
     </div>
 
-    <div class="button-container">
-        <button id="saveButton" disabled>Save Selection</button>
-        <button id="sendButton" disabled>
-            <i class="fas fa-paper-plane"></i>
-        </button>
+    <!-- Update Status Section (Empty for Now) -->
+    <div id="updateStatusSection" style="display: none;">
+        <p>Update status feature coming soon...</p>
     </div>
 
     <script src="popup.js"></script>
