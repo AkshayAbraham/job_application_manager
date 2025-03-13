@@ -1,16 +1,35 @@
 let originalJobData = {};
 let hasUserEdited = false;
 
+// Function to show a custom error notification
+function showErrorNotification(message) {
+    const notification = document.getElementById("customNotification");
+    const notificationMessage = document.getElementById("notificationMessage");
+
+    // Set the message and style
+    notificationMessage.textContent = message;
+    notification.classList.add("error");
+
+    // Show the notification
+    notification.classList.remove("hidden");
+
+    // Hide the notification after 2 seconds
+    setTimeout(() => {
+        notification.classList.add("hidden");
+        notification.classList.remove("error");
+    }, 2000);
+}
+
 function updateDataDisplay(jobData) {
     document.getElementById("jobTitle").value = jobData.jobTitle || "";
     document.getElementById("companyName").value = jobData.companyName || "";
-    document.getElementById("companyLocation").value = jobData.companyLocation || ""; // NEW
+    document.getElementById("companyLocation").value = jobData.companyLocation || "";
     document.getElementById("recruiterName").value = jobData.recruiterName || "";
     document.getElementById("recruiterLinkedIn").value = jobData.recruiterLinkedIn || "";
     document.getElementById("recruiterEmail").value = jobData.recruiterEmail || "";
     document.getElementById("website").value = jobData.website || "";
-    document.getElementById("networking").value = jobData.networking || ""; // NEW
-    document.getElementById("comments").value = jobData.comments || ""; // NEW
+    document.getElementById("networking").value = jobData.networking || "";
+    document.getElementById("comments").value = jobData.comments || "";
 
     // Update the originalJobData to reflect the current state
     originalJobData = { ...jobData };
@@ -36,8 +55,8 @@ function checkEdits() {
         recruiterLinkedIn: document.getElementById("recruiterLinkedIn").value,
         recruiterEmail: document.getElementById("recruiterEmail").value,
         website: document.getElementById("website").value,
-        networking:document.getElementById("networking").value,
-        comments:document.getElementById("comments").value,
+        networking: document.getElementById("networking").value,
+        comments: document.getElementById("comments").value,
     };
 
     // Check if the current data differs from the original data
@@ -59,8 +78,8 @@ document.getElementById("sendButton").addEventListener("click", () => {
         recruiterLinkedIn: document.getElementById("recruiterLinkedIn").value,
         recruiterEmail: document.getElementById("recruiterEmail").value,
         website: document.getElementById("website").value,
-        networking:document.getElementById("networking").value,
-        comments:document.getElementById("comments").value,
+        networking: document.getElementById("networking").value,
+        comments: document.getElementById("comments").value,
         applicationStatus: "Applied",
         appliedDate: new Date().toLocaleDateString()
     };
@@ -68,10 +87,9 @@ document.getElementById("sendButton").addEventListener("click", () => {
     chrome.runtime.sendMessage({ action: "sendToSheets", jobData: updatedJobData }, (response) => {
         console.log("Response from background:", response);
         if (response.status === "success") {
-            alert("Data sent to Google Sheets!");
-            updateDataDisplay(updatedJobData);
+            updateDataDisplay(updatedJobData); // No success notification
         } else {
-            alert("Error sending data to Google Sheets.");
+            showErrorNotification("Error sending data to Google Sheets.");
         }
     });
 });
@@ -85,8 +103,8 @@ document.getElementById("saveButton").addEventListener("click", () => {
         recruiterLinkedIn: document.getElementById("recruiterLinkedIn").value,
         recruiterEmail: document.getElementById("recruiterEmail").value,
         website: document.getElementById("website").value,
-        networking:document.getElementById("networking").value,
-        comments:document.getElementById("comments").value,
+        networking: document.getElementById("networking").value,
+        comments: document.getElementById("comments").value,
     };
 
     chrome.runtime.sendMessage({ action: "saveSelection", text: JSON.stringify(updatedJobData), url: null }, (response) => {
@@ -151,3 +169,66 @@ document.getElementById("updateStatusTab").addEventListener("click", function() 
     this.classList.add("active");
     document.getElementById("addAppTab").classList.remove("active");
 });
+
+document.getElementById("updateStatusButton").addEventListener("click", () => {
+    const jobTitle = document.getElementById("updateJobTitle").value;
+    const companyName = document.getElementById("updateCompanyName").value;
+    const status = document.getElementById("updateStatus").value;
+
+    if (!jobTitle || !companyName) {
+        showErrorNotification("Please enter both Job Title and Company Name.");
+        return;
+    }
+
+    chrome.runtime.sendMessage({
+        action: "updateStatus",
+        jobTitle,
+        companyName,
+        status
+    }, (response) => {
+        if (response.status === "success") {
+            // No success notification
+            // Clear the temporary data after successful update
+            chrome.storage.local.remove("temporaryUpdateData", () => {
+                console.log("Temporary data cleared.");
+                // Clear the input fields
+                document.getElementById("updateJobTitle").value = "";
+                document.getElementById("updateCompanyName").value = "";
+                document.getElementById("updateStatus").value = "Applied";
+            });
+        } else {
+            showErrorNotification("Error updating status.");
+        }
+    });
+});
+
+// Function to restore data from chrome.storage
+function restoreTemporaryData() {
+    chrome.storage.local.get(["temporaryUpdateData"], (result) => {
+        if (result.temporaryUpdateData) {
+            document.getElementById("updateJobTitle").value = result.temporaryUpdateData.jobTitle || "";
+            document.getElementById("updateCompanyName").value = result.temporaryUpdateData.companyName || "";
+            document.getElementById("updateStatus").value = result.temporaryUpdateData.status || "Applied";
+        }
+    });
+}
+
+// Function to save data to chrome.storage
+function saveTemporaryData() {
+    const temporaryUpdateData = {
+        jobTitle: document.getElementById("updateJobTitle").value,
+        companyName: document.getElementById("updateCompanyName").value,
+        status: document.getElementById("updateStatus").value
+    };
+    chrome.storage.local.set({ temporaryUpdateData }, () => {
+        console.log("Data saved temporarily:", temporaryUpdateData);
+    });
+}
+
+// Restore data when the popup is opened
+document.addEventListener("DOMContentLoaded", restoreTemporaryData);
+
+// Save data when the user interacts with the input fields
+document.getElementById("updateJobTitle").addEventListener("input", saveTemporaryData);
+document.getElementById("updateCompanyName").addEventListener("input", saveTemporaryData);
+document.getElementById("updateStatus").addEventListener("change", saveTemporaryData);
