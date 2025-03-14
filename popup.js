@@ -87,7 +87,8 @@ document.getElementById("sendButton").addEventListener("click", () => {
     chrome.runtime.sendMessage({ action: "sendToSheets", jobData: updatedJobData }, (response) => {
         console.log("Response from background:", response);
         if (response.status === "success") {
-            updateDataDisplay(updatedJobData); // No success notification
+            updateDataDisplay(updatedJobData);
+            showSuccessNotification("Data sent successfully!");
         } else {
             showErrorNotification("Error sending data to Google Sheets.");
         }
@@ -187,7 +188,7 @@ document.getElementById("updateStatusButton").addEventListener("click", () => {
         status
     }, (response) => {
         if (response.status === "success") {
-            // No success notification
+            showSuccessNotification("Status updated successfully!");
             // Clear the temporary data after successful update
             chrome.storage.local.remove("temporaryUpdateData", () => {
                 console.log("Temporary data cleared.");
@@ -232,3 +233,22 @@ document.addEventListener("DOMContentLoaded", restoreTemporaryData);
 document.getElementById("updateJobTitle").addEventListener("input", saveTemporaryData);
 document.getElementById("updateCompanyName").addEventListener("input", saveTemporaryData);
 document.getElementById("updateStatus").addEventListener("change", saveTemporaryData);
+
+function showSuccessNotification(message) {
+    const notification = document.getElementById("customNotification");
+    const overlay = document.getElementById("overlay");
+    const notificationMessage = document.getElementById("notificationMessage");
+
+    // Set the message and icon
+    notificationMessage.textContent = message;
+
+    // Show the overlay and notification instantly
+    overlay.style.display = "block";
+    notification.style.display = "flex"; // Use flex to maintain alignment
+
+    // Hide the overlay and notification after 2 seconds
+    setTimeout(() => {
+        overlay.style.display = "none";
+        notification.style.display = "none";
+    }, 4000);
+}
