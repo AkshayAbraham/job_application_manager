@@ -6,7 +6,7 @@ body, html {
     height: 500px;
     overflow: hidden;
     background-color: #1E1E1E;
-    font-family: Arial, sans-serif;
+    font-family: 'Nunito'Nunito, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -27,8 +27,9 @@ h3 {
 #dataDisplay strong,
 button,
 label {
-    color: #EBF7FF; /* Updated sub text color */
+    color: #979b9d; /* Updated sub text color */
     font-size: 12px; /* Set size to 12px */
+    font-weight: 400; 
 }
 
 /* Button container */
@@ -142,6 +143,9 @@ input[type="text"] {
     border-radius: 20px;
     outline: none; /* Remove default outline */
     transition: border-color 0.3s ease; /* Smooth transition */
+    font-family: 'Nunito', sans-serif; /* Apply Nunito font */
+    letter-spacing: 0.7px; /* Slight distance between characters */
+    font-weight: 450; 
 }
 
 /* Change border color when input is selected */
@@ -236,8 +240,9 @@ input[type="text"]:focus {
 /* Ensure labels (subtext) are centered */
 #updateStatusSection p,
 #updateStatusSection strong {
-    color: #EBF7FF;
-    font-size: 12px;
+    color: #979b9d; /* Updated sub text color */
+    font-size: 12px; /* Set size to 12px */
+    font-weight: 400; 
     text-align: center;
     margin-bottom: 5px; /* Add margin to space out the label from input */
     width: 100%;
@@ -261,6 +266,9 @@ input[type="text"]:focus {
     outline: none;
     transition: border-color 0.3s ease;
     display: block; /* Ensure block-level display */
+    font-family: 'Nunito', sans-serif; /* Apply Nunito font */
+    letter-spacing: 0.7px; /* Slight distance between characters */
+    font-weight: 450; 
 }
 
 /* Focus style */

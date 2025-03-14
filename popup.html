@@ -4,6 +4,11 @@
     <title>Job Saver</title>
     <link rel="stylesheet" href="popup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Add Nunito font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
 </head>
 <body>
     <h3>Job Saver</h3>
@@ -39,23 +44,23 @@
     </div>
 
     <!-- Update Status Section (Empty for Now) -->
-<!-- Update Status Section -->
-<div id="updateStatusSection" style="display: none;">
-    <div class="input-container">
-        <p><strong>Job Title:</strong> <input type="text" id="updateJobTitle" /></p>
-        <p><strong>Company Name:</strong> <input type="text" id="updateCompanyName" /></p>
-        <p><strong>Status:</strong>
-            <select id="updateStatus">
-                <option value="Applied">Applied</option>
-                <option value="Selected for Interview">Selected for Interview</option>
-                <option value="Rejected">Rejected</option>
-            </select>
-        </p>
+    <div id="updateStatusSection" style="display: none;">
+        <div class="input-container">
+            <p><strong>Job Title:</strong> <input type="text" id="updateJobTitle" /></p>
+            <p><strong>Company Name:</strong> <input type="text" id="updateCompanyName" /></p>
+            <p><strong>Status:</strong>
+                <select id="updateStatus">
+                    <option value="Applied">Applied</option>
+                    <option value="Selected for Interview">Selected for Interview</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+            </p>
+        </div>
+        <div class="button-container">
+            <button id="updateStatusButton">Update Status</button>
+        </div>
     </div>
-    <div class="button-container">
-        <button id="updateStatusButton">Update Status</button>
-    </div>
-</div>
+
     <script src="popup.js"></script>
 </body>
 </html>
