@@ -68,26 +68,6 @@ function updateStatusInSheets(jobTitle, companyName, status, callback) {
     });
 }
 
-<<<<<<< HEAD
-=======
-function updateStatusInSheets(jobTitle, companyName, status, callback) {
-    fetch("MY_WEBAPP_URL/updateStatus", {
-        method: "POST",
-        body: JSON.stringify({ jobTitle, companyName, status }),
-        headers: { "Content-Type": "application/json" }
-    })
-    .then(response => response.text())
-    .then(data => {
-        console.log("Status updated:", data);
-        callback(true); // Call the callback with success
-    })
-    .catch(error => {
-        console.error("Error:", error);
-        callback(false); // Call the callback with failure
-    });
-}
-
->>>>>>> 2909229 (immlemented the functionality and logic for updating the status of the application vis the extension.)
 function processSelection(selectedText, url) {
     if (!jobData.jobTitle) {
         jobData.jobTitle = selectedText;

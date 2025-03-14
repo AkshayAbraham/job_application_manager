@@ -121,7 +121,7 @@ button i {
 
 /* Input container */
 .input-container {
-    width: 90%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -129,7 +129,8 @@ button i {
 
 /* Input field styling */
 input[type="text"] {
-    width: 100%;
+    width: 230px;  /* Take full width */
+    max-width: 250px; /* Restrict the max width of inputs */
     padding: 8px;
     margin: 5px 0;
     border: 1px solid white; /* Default border color */
@@ -208,3 +209,101 @@ input[type="text"]:focus {
 .notification.error {
     background-color: #f44336; /* Red background for error */
 }
+
+/* Ensure Update Status section layout is fully centered */
+#updateStatusSection {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Center the input container with full width control */
+#updateStatusSection .input-container {
+    width: 100%;  /* Take full width */
+    max-width: 250px; /* Restrict the max width of inputs */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px; /* Added padding */
+    box-sizing: border-box;  /* Prevents overflow */
+    margin: 0 auto; /* Ensures centering */
+}
+
+/* Ensure labels (subtext) are centered */
+#updateStatusSection p,
+#updateStatusSection strong {
+    color: #EBF7FF;
+    font-size: 12px;
+    text-align: center;
+    margin-bottom: 5px; /* Add margin to space out the label from input */
+    width: 100%;
+    margin-top: 5px; /* Added margin-top to align properly with input fields */
+}
+
+/* Ensure all input fields and dropdowns are centrally aligned */
+#updateStatusSection input[type="text"],
+#updateStatusSection select {
+    width: 100%;  /* Ensures inputs take the full container width */
+    max-width: 250px; /* Keeps it within a defined width */
+    padding: 8px;
+    margin: 10px 0; /* Same margin as Add Application input fields */
+    border: 1px solid white;
+    background-color: #1E1E1E;
+    color: white;
+    font-size: 14px;
+    box-sizing: border-box;
+    text-align: center;
+    border-radius: 20px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    display: block; /* Ensure block-level display */
+}
+
+/* Focus style */
+#updateStatusSection input[type="text"]:focus,
+#updateStatusSection select:focus {
+    border: 1.5px solid #00A8E8;
+}
+
+/* Center the button */
+#updateStatusSection .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 15px;
+}
+
+/* Style the button to match input width and Add Application button's height */
+#updateStatusButton {
+    width: 230px;  /* Ensure button width matches inputs */
+    max-width: 250px; /* Ensures button is not stretched */
+    text-align: center;
+    padding: 8px;  /* Match padding for input fields */
+    border-radius: 20px;
+    background-color: #00A8E8;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: none;
+    display: block;
+    margin: 0 auto; /* Centering the button */
+    height: 40px;  /* Match the height of the button in Add Application section */
+}
+
+#updateStatusButton:hover {
+    background-color: #0056b3;
+}
+
+#updateStatusButton:disabled {
+    background-color: #cccccc;
+    color: #9e9e9e;
+    cursor: not-allowed;
+}
+
+
