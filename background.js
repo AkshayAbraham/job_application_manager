@@ -52,7 +52,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 function updateStatusInSheets(jobTitle, companyName, status, callback) {
-    fetch("MY_WEAPP_URL/updateStatus", {
+    fetch("MY_WEBAPP_URL/updateStatus", {
         method: "POST",
         body: JSON.stringify({ jobTitle, companyName, status }),
         headers: { "Content-Type": "application/json" }
