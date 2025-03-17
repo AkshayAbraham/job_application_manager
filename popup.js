@@ -36,7 +36,7 @@ function updateDataDisplay(jobData) {
     hasUserEdited = false;
 
     // Enable/disable the "Send to Sheets" button based on required fields
-    if (document.getElementById("jobTitle").value && document.getElementById("companyName").value && document.getElementById("recruiterName").value) {
+    if (document.getElementById("jobTitle").value && document.getElementById("companyName").value) {
         document.getElementById("sendButton").disabled = false;
     } else {
         document.getElementById("sendButton").disabled = true;
@@ -89,6 +89,11 @@ document.getElementById("sendButton").addEventListener("click", () => {
         if (response.status === "success") {
             updateDataDisplay(updatedJobData);
             showSuccessNotification("Data sent successfully!");
+
+            // Clear temporary data from storage after successful submission
+            chrome.storage.local.remove("temporaryJobData", () => {
+                console.log("Temporary job data cleared.");
+            });
         } else {
             showErrorNotification("Error sending data to Google Sheets.");
         }
@@ -108,6 +113,12 @@ document.getElementById("saveButton").addEventListener("click", () => {
         comments: document.getElementById("comments").value,
     };
 
+    // Save to chrome.storage.local
+    chrome.storage.local.set({ temporaryJobData: updatedJobData }, () => {
+        console.log("Data saved temporarily:", updatedJobData);
+    });
+
+    // Send to background.js
     chrome.runtime.sendMessage({ action: "saveSelection", text: JSON.stringify(updatedJobData), url: null }, (response) => {
         console.log("Response from background:", response);
         chrome.runtime.sendMessage({ action: "getJobData" }, (response) => {
@@ -120,6 +131,15 @@ document.getElementById("saveButton").addEventListener("click", () => {
 
 function getSelectedText() {
     return window.getSelection().toString();
+}
+
+// Restore temporary job data when the popup is opened
+function restoreTemporaryJobData() {
+    chrome.storage.local.get(["temporaryJobData"], (result) => {
+        if (result.temporaryJobData) {
+            updateDataDisplay(result.temporaryJobData);
+        }
+    });
 }
 
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -139,6 +159,11 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                 chrome.runtime.sendMessage({ action: "getJobData" }, (response) => {
                     if (response.jobData) {
                         updateDataDisplay(response.jobData);
+
+                        // Automatically save the data to chrome.storage.local
+                        chrome.storage.local.set({ temporaryJobData: response.jobData }, () => {
+                            console.log("Data saved automatically to chrome.storage.local:", response.jobData);
+                        });
                     }
                 });
             });
@@ -228,6 +253,11 @@ function saveTemporaryData() {
 
 // Restore data when the popup is opened
 document.addEventListener("DOMContentLoaded", restoreTemporaryData);
+// Restore data when the popup is opened
+document.addEventListener("DOMContentLoaded", () => {
+    restoreTemporaryJobData(); // Restore job data for the Add Application section
+    restoreTemporaryData(); // Restore data for the Update Status section
+});
 
 // Save data when the user interacts with the input fields
 document.getElementById("updateJobTitle").addEventListener("input", saveTemporaryData);
