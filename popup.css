@@ -134,7 +134,7 @@ input[type="text"] {
     max-width: 250px; /* Restrict the max width of inputs */
     padding: 8px;
     margin: 5px 0;
-    border: 1px solid white; /* Default border color */
+    border: 1px solid #979b9d; /* Default border color */
     background-color: #1E1E1E; /* Background color */
     color: white; /* Text color */
     font-size: 14px;
@@ -292,7 +292,7 @@ input[type="text"]:focus {
     max-width: 250px; /* Keeps it within a defined width */
     padding: 8px;
     margin: 10px 0; /* Same margin as Add Application input fields */
-    border: 1px solid white;
+    border: 1px solid #979b9d;
     background-color: #1E1E1E;
     color: white;
     font-size: 14px;
@@ -350,4 +350,98 @@ input[type="text"]:focus {
     cursor: not-allowed;
 }
 
+/* Style for the bottom-left briefcase icon */
+#bottomIcon {
+    position: fixed;
+    bottom: 0px;
+    left: 10px;
+    cursor: pointer;
+    padding: 10px;
+}
+
+#briefcaseIcon {
+    font-size: 17px;
+    transition: transform 0.2s ease-in-out;
+}
+
+#briefcaseIcon:hover {
+    transform: scale(1.2);
+}
+
+/* Override centering for the Work Experience Page */
+#workExperiencePage {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align children to the left */
+    justify-content: flex-start; /* Align children to the top */
+    width: 100%; /* Take full width */
+    height: 100%; /* Take full height */
+    padding: 10px; /* Add some padding */
+    box-sizing: border-box; /* Include padding in width/height */
+}
+
+/* Work Experience Page Header */
+#workExperiencePage .header {
+    display: flex;
+    align-items: center; /* Align icon and text vertically */
+    gap: 10px; /* Space between icon and text */
+    padding: 10px 10px 10px 0; /* Remove left padding */
+    justify-content: flex-start; /* Ensure left alignment */
+    width: 100%; /* Take full width */
+    background-color: transparent; /* Remove any background */
+    border-bottom: 1px solid #00A8E8; /* Add a line below the header */
+    box-sizing: border-box; /* Ensure padding is included in width */
+}
+
+#workExperiencePage .header h2 {
+    margin: 0; /* Remove default margin */
+    font-size: 18px; /* Adjust font size */
+    font-weight: 600; /* Make the text bold */
+    color: white; /* Light text color for dark background */
+}
+
+#backIcon {
+    font-size: 16px; /* Adjust icon size */
+    color: #00A8E8; /* Match the theme color */
+    cursor: pointer; /* Make it clickable */
+    transition: color 0.2s ease-in-out; /* Smooth hover effect */
+}
+
+#backIcon:hover {
+    color: #0056b3; /* Change color on hover */
+}
+
+/* Dashboard Circular Icon */
+#dashboardIcon {
+    position: fixed;
+    bottom: 5px;
+    right: 10px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out;
+}
+
+#dashboardIcon:hover {
+    transform: scale(1.1);
+}
+
+#dashboardBtn {
+    font-size: 32px;
+    color: white;
+}
+
+/* Separator Line */
+.separator {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background-color: #00A8E8;
+    margin: 15px 0;
+    opacity: 0.5;
+}
 

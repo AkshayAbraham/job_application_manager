@@ -282,3 +282,28 @@ function showSuccessNotification(message) {
         notification.style.display = "none";
     }, 4000);
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    const mainContainer = document.getElementById("mainContainer");
+    const workExperiencePage = document.getElementById("workExperiencePage");
+    const briefcaseIcon = document.getElementById("briefcaseIcon");
+    const backIcon = document.getElementById("backIcon");
+
+    // Open Work Experience Page
+    briefcaseIcon.addEventListener("click", function () {
+        mainContainer.style.display = "none"; // Hide main content
+        workExperiencePage.style.display = "block"; // Show new page
+    });
+
+    // Back to Main Page
+    backIcon.addEventListener("click", function () {
+        mainContainer.style.display = "block"; // Show main content
+        workExperiencePage.style.display = "none"; // Hide new page
+    });
+});
+
+// Get the dashboard icon
+document.getElementById("dashboardBtn").addEventListener("click", function() {
+    // Open dashboard.html in a new tab
+    chrome.tabs.create({ url: "dashboard.html" });
+});

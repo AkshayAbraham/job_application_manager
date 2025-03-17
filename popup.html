@@ -11,9 +11,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
 </head>
 <body>
+
+<!-- Main Container -->
+<div id="mainContainer">
     <h3>Job Saver</h3>
 
-    <!-- Tab navigation (text only, no buttons) -->
+    <!-- Tab navigation -->
     <div class="tabs-container">
         <span id="addAppTab" class="tab active">Add Application</span>
         <span id="updateStatusTab" class="tab">Update Status</span>
@@ -43,7 +46,7 @@
         </div>
     </div>
 
-    <!-- Update Status Section (Empty for Now) -->
+    <!-- Update Status Section -->
     <div id="updateStatusSection" style="display: none;">
         <div class="input-container">
             <p><strong>Job Title:</strong> <input type="text" id="updateJobTitle" /></p>
@@ -62,14 +65,36 @@
     </div>
 
     <!-- Overlay Layer -->
-<div id="overlay" class="hidden"></div>
+    <div id="overlay" class="hidden"></div>
 
-<!-- Custom Notification -->
-<div id="customNotification" class="hidden">
-    <i class="fa-solid fa-circle-check fa-bounce" style="color: #00a8e8;"></i>
-    <span id="notificationMessage">Data sent successfully!</span>
+    <!-- Custom Notification -->
+    <div id="customNotification" class="hidden">
+        <i class="fa-solid fa-circle-check fa-bounce" style="color: #00a8e8;"></i>
+        <span id="notificationMessage">Data sent successfully!</span>
+    </div>
+
+    <!-- Separator Line -->
+<div class="separator"></div>
+
+    <!-- Briefcase Icon (Bottom Left) -->
+    <div id="bottomIcon">
+        <i id="briefcaseIcon" class="fa-solid fa-briefcase" style="color: #026e9c;"></i>
+    </div>
 </div>
 
-    <script src="popup.js"></script>
+<!-- Button to go to Dashboard -->
+<div id="dashboardIcon">
+    <i id="dashboardBtn" class="fa-solid fa-circle-plus  "style="color: #026e9c;"></i>
+</div>
+
+<!-- Work Experience Page (Initially Hidden) -->
+<div id="workExperiencePage" style="display: none;">
+    <div class="header">
+        <i id="backIcon" class="fa-solid fa-arrow-left"></i>
+        <h2>Work Experience</h2>
+    </div>
+</div>
+
+<script src="popup.js"></script>
 </body>
 </html>
