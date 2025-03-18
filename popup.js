@@ -335,8 +335,16 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".copy-btn").forEach(button => {
                 button.addEventListener("click", function () {
                     const description = this.getAttribute("data-description");
+                    const originalText = this.textContent; // Store original button text
+                    const originalColor = this.style.backgroundColor; // Store original color
+                    const buttonElement = this; //store button element
                     navigator.clipboard.writeText(description).then(() => {
-                        alert("Job description copied to clipboard!");
+                        buttonElement.textContent = "Description Copied!"; // Change button text
+                        buttonElement.style.backgroundColor = "#0056b3";
+                        setTimeout(() => {
+                            buttonElement.textContent = originalText; // Revert to original text after 3 seconds
+                            buttonElement.style.backgroundColor = originalColor; // Revert to original color
+                        }, 3000); // 3000 milliseconds = 3 seconds
                     }).catch(err => {
                         console.error("Failed to copy: ", err);
                     });
