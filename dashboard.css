@@ -138,8 +138,8 @@ button:hover {
 
 /* Work Experience List Styling */
 #workExperienceList {
-    list-style: none;
-    padding: 0;
+    list-style-type: none; /* Removes bullet points from list items */
+    padding: 0; /* Removes any default padding */
     display: flex;
     flex-direction: column;
     gap: 15px;

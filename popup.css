@@ -368,47 +368,60 @@ input[type="text"]:focus {
     transform: scale(1.2);
 }
 
+/* popup.css */
+
 /* Override centering for the Work Experience Page */
 #workExperiencePage {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Align children to the left */
-    justify-content: flex-start; /* Align children to the top */
-    width: 100%; /* Take full width */
-    height: 100%; /* Take full height */
-    padding: 10px; /* Add some padding */
-    box-sizing: border-box; /* Include padding in width/height */
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+}
+
+#workExperiencePage::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 /* Work Experience Page Header */
 #workExperiencePage .header {
     display: flex;
-    align-items: center; /* Align icon and text vertically */
-    gap: 10px; /* Space between icon and text */
-    padding: 10px 10px 10px 0; /* Remove left padding */
-    justify-content: flex-start; /* Ensure left alignment */
-    width: 100%; /* Take full width */
-    background-color: transparent; /* Remove any background */
-    border-bottom: 1px solid #00A8E8; /* Add a line below the header */
-    box-sizing: border-box; /* Ensure padding is included in width */
+    align-items: center;
+    gap: 10px;
+    padding: 10px 10px 10px 0;
+    justify-content: flex-start;
+    width: 100%;
+    background-color: transparent;
+    border-bottom: 1px solid #00A8E8;
+    box-sizing: border-box;
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick it to the top */
+    background-color: #1E1E1E; /* Ensure background to cover content when scrolling */
+    z-index: 10; /* Ensure it's above other elements */
 }
 
 #workExperiencePage .header h2 {
-    margin: 0; /* Remove default margin */
-    font-size: 18px; /* Adjust font size */
-    font-weight: 600; /* Make the text bold */
-    color: white; /* Light text color for dark background */
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
 }
 
 #backIcon {
-    font-size: 16px; /* Adjust icon size */
-    color: #00A8E8; /* Match the theme color */
-    cursor: pointer; /* Make it clickable */
-    transition: color 0.2s ease-in-out; /* Smooth hover effect */
+    font-size: 16px;
+    color: #00A8E8;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
 }
 
 #backIcon:hover {
-    color: #0056b3; /* Change color on hover */
+    color: #0056b3;
 }
 
 /* Dashboard Circular Icon */
@@ -444,4 +457,52 @@ input[type="text"]:focus {
     margin: 15px 0;
     opacity: 0.5;
 }
+
+/* Experience Card Container */
+.experience-card-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Experience Card Style */
+.experience-card {
+    background-color: #282828; /* Darker background for cards */
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    color: #cccccc; /* Set default text color */
+}
+
+.experience-header,
+.experience-info {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Consistent gap */
+    margin-bottom: 5px; /* Adjust as needed */
+}
+
+.experience-header .job-title {
+    color: white; /* Set job title color */
+    font-weight: bold; /* Make the job title bold */
+    letter-spacing: 1px;
+}
+.copy-btn {
+    background-color: #00A8E8;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.copy-btn:hover {
+    background-color: #0056b3;
+}
+
 

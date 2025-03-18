@@ -283,27 +283,98 @@ function showSuccessNotification(message) {
     }, 4000);
 }
 
+// popup.js
 document.addEventListener("DOMContentLoaded", function () {
-    const mainContainer = document.getElementById("mainContainer");
     const workExperiencePage = document.getElementById("workExperiencePage");
-    const briefcaseIcon = document.getElementById("briefcaseIcon");
     const backIcon = document.getElementById("backIcon");
+    const briefcaseIcon = document.getElementById("briefcaseIcon");
+    const dashboardIcon = document.getElementById("dashboardIcon");
+    const mainContainer = document.getElementById("mainContainer");
 
-    // Open Work Experience Page
+    // Function to display work experiences
+    function displayWorkExperiencesInPopup() {
+        chrome.storage.local.get({ workExperiences: [] }, (data) => {
+            workExperiencePage.innerHTML = `
+                <div class="header">
+                    <i id="backIcon" class="fa-solid fa-arrow-left"></i>
+                    <h2>Work Experience</h2>
+                </div>
+                <div id="popupWorkExperienceList" class="experience-card-container"></div>
+            `;
+            const workExperienceList = document.getElementById("popupWorkExperienceList");
+
+            if (data.workExperiences.length === 0) {
+                workExperienceList.innerHTML = "<p>No work experience added yet.</p>";
+                return;
+            }
+
+            data.workExperiences.forEach((item, index) => {
+                const card = document.createElement("div");
+                card.classList.add("experience-card");
+                card.innerHTML = `
+                    <div class="experience-header">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <span class="job-title">${item.jobTitle}</span>
+                    </div>
+                    <div class="experience-info">
+                        <i class="fa-solid fa-building"></i>
+                        <span>${item.companyName}</span>
+                    </div>
+                    <div class="experience-info">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <span>${item.startDate} - ${item.endDate}</span>
+                    </div>
+                    <button class="copy-btn" data-description="${item.description}">
+                        Copy Description
+                    </button>
+                `;
+                workExperienceList.appendChild(card);
+            });
+
+            // Add event listeners to copy buttons
+            document.querySelectorAll(".copy-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    const description = this.getAttribute("data-description");
+                    navigator.clipboard.writeText(description).then(() => {
+                        alert("Job description copied to clipboard!");
+                    }).catch(err => {
+                        console.error("Failed to copy: ", err);
+                    });
+                });
+            });
+
+            // Re-add event listener for back button
+            document.getElementById("backIcon").addEventListener("click", function () {
+                workExperiencePage.style.display = "none";
+                mainContainer.style.display = "block";
+                dashboardIcon.style.display = "block"; // Show dashboard icon
+            });
+        });
+    }
+
     briefcaseIcon.addEventListener("click", function () {
-        mainContainer.style.display = "none"; // Hide main content
-        workExperiencePage.style.display = "block"; // Show new page
+        mainContainer.style.display = "none";
+        workExperiencePage.style.display = "block";
+        displayWorkExperiencesInPopup();
+        dashboardIcon.style.display = "none"; // Hide dashboard icon
     });
 
-    // Back to Main Page
     backIcon.addEventListener("click", function () {
-        mainContainer.style.display = "block"; // Show main content
-        workExperiencePage.style.display = "none"; // Hide new page
+        workExperiencePage.style.display = "none";
+        mainContainer.style.display = "block";
+        dashboardIcon.style.display = "block"; // Show dashboard icon
     });
+
+    document.getElementById("dashboardBtn").addEventListener("click", function() {
+        chrome.tabs.create({ url: "dashboard.html" });
+    });
+
+    // Use a setTimeout to ensure the DOM is fully rendered
+    setTimeout(() => {
+        if (mainContainer.style.display !== "none") {
+            dashboardIcon.style.display = "block";
+        }
+    }, 0); // Delay of 0ms, but still allows the browser to finish rendering
 });
 
-// Get the dashboard icon
-document.getElementById("dashboardBtn").addEventListener("click", function() {
-    // Open dashboard.html in a new tab
-    chrome.tabs.create({ url: "dashboard.html" });
-});
+
