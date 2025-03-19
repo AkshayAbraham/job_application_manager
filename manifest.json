@@ -14,6 +14,12 @@
         "default": "Ctrl+Shift+S"
       },
       "description": "Save selected text"
+    },
+    "show_social_media_page": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+X"
+      },
+      "description": "Show Social Media Page"
     }
   },
   "action": {

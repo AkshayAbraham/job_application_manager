@@ -134,3 +134,13 @@ function isLinkedInURL(text) {
 function isEmail(text) {
     return /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/.test(text);
 }
+
+chrome.commands.onCommand.addListener((command) => {
+    if (command === "show_social_media_page") {
+      // Open the popup if it's not already open
+      chrome.action.openPopup(() => {
+        // Send a message to the popup script to show the social media page
+        chrome.runtime.sendMessage({ action: "showSocialMediaPage" });
+      });
+    }
+  });

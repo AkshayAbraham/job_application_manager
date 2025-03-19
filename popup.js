@@ -391,7 +391,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const mainContainer = document.getElementById("mainContainer");
     const socialMediaBackIcon = document.getElementById("socialMediaBackIcon");
     const dashboardIcon = document.getElementById("dashboardIcon");
-    const socialMediaIcon = document.getElementById("socialMediaIcon"); // Assuming you have this icon in your dashboard page
+    const socialMediaIcon = document.getElementById("socialMediaIcon");
 
     // Show Social Media Page and Hide Main Container
     socialMediaBtn.addEventListener("click", function() {
@@ -403,16 +403,25 @@ document.addEventListener("DOMContentLoaded", function() {
     socialMediaBackIcon.addEventListener("click", function() {
         socialMediaPage.style.display = "none";
         mainContainer.style.display = "block";
-        dashboardIcon.style.display = "block"; // Show dashboard icon
-        socialMediaIcon.style.display = "block"; // Show the socialMediaIcon
+        dashboardIcon.style.display = "block";
+        socialMediaIcon.style.display = "block";
     });
 
-    const popupSocialMediaList = document.getElementById("popupSocialMediaList");
+    // Listen for messages from the background script
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        if (message.action === "showSocialMediaPage") {
+            mainContainer.style.display = "none";
+            socialMediaPage.style.display = "block";
+            dashboardIcon.style.display = "none";
+            socialMediaIcon.style.display = "none";
+            displaySocialMediaInPopup();
+        }
+    });
 
     // Function to display social media platforms in popup
     function displaySocialMediaInPopup() {
         chrome.storage.local.get({ socialMediaLinks: [] }, (data) => {
-            popupSocialMediaList.innerHTML = ""; // Clear any existing content
+            popupSocialMediaList.innerHTML = "";
 
             if (data.socialMediaLinks.length === 0) {
                 popupSocialMediaList.innerHTML = "<p>No social media links added yet.</p>";
@@ -435,7 +444,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 popupSocialMediaList.appendChild(card);
             });
 
-            // Add event listeners to copy buttons
             document.querySelectorAll(".copy-btn").forEach(button => {
                 button.addEventListener("click", function () {
                     const url = this.getAttribute("data-url");
@@ -461,8 +469,8 @@ document.addEventListener("DOMContentLoaded", function() {
     socialMediaIcon.addEventListener("click", function () {
         mainContainer.style.display = "none";
         socialMediaPage.style.display = "block";
-        dashboardIcon.style.display = "none"; // Hide dashboard icon
-        socialMediaIcon.style.display = "none"; // Hide socialMediaIcon
+        dashboardIcon.style.display = "none";
+        socialMediaIcon.style.display = "none";
         displaySocialMediaInPopup();
     });
 
@@ -470,7 +478,7 @@ document.addEventListener("DOMContentLoaded", function() {
     setTimeout(() => {
         if (mainContainer.style.display !== "none") {
             dashboardIcon.style.display = "block";
-            socialMediaIcon.style.display = "block"; // Show socialMediaIcon on main page load
+            socialMediaIcon.style.display = "block";
         }
     }, 0);
 });
