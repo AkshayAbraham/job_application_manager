@@ -28,6 +28,21 @@ document.addEventListener("DOMContentLoaded", function () {
     const saveSocialMediaButton = document.getElementById("saveSocialMedia");
     const socialMediaList = document.getElementById("socialMediaList");
 
+    // Cover Letter Elements
+    const coverLetterNameInput = document.getElementById("coverLetterName");
+    const coverLetterContentInput = document.getElementById("coverLetterContent");
+    const saveCoverLetterButton = document.getElementById("saveCoverLetter");
+    const coverLetterList = document.getElementById("coverLetterList");
+    const coverLetterHelpText = document.getElementById('coverLetterHelpText');
+
+    coverLetterContent.addEventListener('focus', function() {
+        coverLetterHelpText.style.display = 'block';
+    });
+
+    coverLetterContent.addEventListener('blur', function() {
+        coverLetterHelpText.style.display = 'none';
+    });
+
     // Save Work Experience
     function saveWorkExperience() {
         const startDate = startDateInput.value;
@@ -175,11 +190,83 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function saveCoverLetter() {
+        const coverLetterName = coverLetterNameInput.value.trim();
+        const coverLetterContent = coverLetterContentInput.value.trim();
+
+        if (!coverLetterName || !coverLetterContent) {
+            alert("Please fill all fields!");
+            return;
+        }
+
+        const coverLetter = { coverLetterName, coverLetterContent };
+
+        chrome.storage.local.get({ coverLetters: [] }, (data) => {
+            const coverLetters = data.coverLetters;
+            coverLetters.push(coverLetter);
+
+            chrome.storage.local.set({ coverLetters }, () => {
+                console.log("Cover Letter Saved!");
+                displayCoverLetters();
+            });
+        });
+
+        // Clear Input Fields
+        [coverLetterNameInput, coverLetterContentInput].forEach(input => input.value = "");
+    }
+
+    // Display Cover Letters
+    function displayCoverLetters() {
+        chrome.storage.local.get({ coverLetters: [] }, (data) => {
+            coverLetterList.innerHTML = "";
+
+            data.coverLetters.forEach((item, index) => {
+                const li = document.createElement("li");
+                li.classList.add("cover-letter-item"); // Apply new styling
+                li.innerHTML = `
+                    <div class="cover-letter-header">
+                        <i class="fa-solid fa-file-alt"></i>
+                        <span class="cover-letter-title">${item.coverLetterName}</span>
+                    </div>
+                    <pre class="formatted-text">${item.coverLetterContent}</pre>
+                    <button class="delete-btn" data-index="${index}">Delete</button>
+                `;
+                coverLetterList.appendChild(li);
+            });
+
+            // Attach event listeners to delete buttons
+            document.querySelectorAll(".delete-btn").forEach(button => {
+                button.addEventListener("click", deleteCoverLetter);
+            });
+        });
+    }
+
+    // Delete Cover Letter
+    function deleteCoverLetter(event) {
+        const index = event.target.getAttribute("data-index");
+
+        chrome.storage.local.get({ coverLetters: [] }, (data) => {
+            let coverLetters = data.coverLetters;
+            coverLetters.splice(index, 1);
+
+            chrome.storage.local.set({ coverLetters }, () => {
+                console.log("Cover Letter Deleted!");
+                displayCoverLetters();
+            });
+        });
+    }
+
     // Event Listeners
     saveButton.addEventListener("click", saveWorkExperience);
     saveSocialMediaButton.addEventListener("click", saveSocialMedia);
+    saveCoverLetterButton.addEventListener("click", saveCoverLetter);
 
     // Load Saved Experiences on Page Load
     displayWorkExperiences();
     displaySocialMediaLinks();
+    displayCoverLetters(); // Initial display
 });
+
+
+
+    

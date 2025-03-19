@@ -289,6 +289,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const backIcon = document.getElementById("backIcon");
     const briefcaseIcon = document.getElementById("briefcaseIcon");
     const dashboardIcon = document.getElementById("dashboardIcon");
+    const socialMediaIcon = document.getElementById("socialMediaIcon");
+    const coverLetterIcon = document.getElementById("coverLetterIcon");
     const mainContainer = document.getElementById("mainContainer");
 
     // Function to display work experiences
@@ -356,6 +358,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 workExperiencePage.style.display = "none";
                 mainContainer.style.display = "block";
                 dashboardIcon.style.display = "block"; // Show dashboard icon
+                socialMediaIcon.style.display = "block";
+                coverLetterIcon.style.display = "block";
             });
         });
     }
@@ -365,12 +369,16 @@ document.addEventListener("DOMContentLoaded", function () {
         workExperiencePage.style.display = "block";
         displayWorkExperiencesInPopup();
         dashboardIcon.style.display = "none"; // Hide dashboard icon
+        socialMediaIcon.style.display = "none";
+        coverLetterIcon.style.display = "none";
     });
 
     backIcon.addEventListener("click", function () {
         workExperiencePage.style.display = "none";
         mainContainer.style.display = "block";
         dashboardIcon.style.display = "block"; // Show dashboard icon
+        socialMediaIcon.style.display = "block";
+        coverLetterIcon.style.display = "block";
     });
 
     document.getElementById("dashboardBtn").addEventListener("click", function() {
@@ -392,6 +400,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const socialMediaBackIcon = document.getElementById("socialMediaBackIcon");
     const dashboardIcon = document.getElementById("dashboardIcon");
     const socialMediaIcon = document.getElementById("socialMediaIcon");
+    const coverLetterIcon = document.getElementById("coverLetterIcon");
 
     // Show Social Media Page and Hide Main Container
     socialMediaBtn.addEventListener("click", function() {
@@ -405,6 +414,7 @@ document.addEventListener("DOMContentLoaded", function() {
         mainContainer.style.display = "block";
         dashboardIcon.style.display = "block";
         socialMediaIcon.style.display = "block";
+        coverLetterIcon.style.display = "block";
     });
 
     // Listen for messages from the background script
@@ -414,6 +424,7 @@ document.addEventListener("DOMContentLoaded", function() {
             socialMediaPage.style.display = "block";
             dashboardIcon.style.display = "none";
             socialMediaIcon.style.display = "none";
+            coverLetterIcon.style.display = "none";
             displaySocialMediaInPopup();
         }
     });
@@ -471,6 +482,7 @@ document.addEventListener("DOMContentLoaded", function() {
         socialMediaPage.style.display = "block";
         dashboardIcon.style.display = "none";
         socialMediaIcon.style.display = "none";
+        coverLetterIcon.style.display = "none";
         displaySocialMediaInPopup();
     });
 

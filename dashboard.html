@@ -7,16 +7,15 @@
 </head>
 <body>
 
-    <!-- Tabs Navigation -->
     <div class="tabs-container">
         <div class="tab active" id="workExperienceTab">Work Experience</div>
         <div class="tab" id="socialMediaTab">Social Media</div>
+        <div class="tab" id="coverLetterTab">Cover Letter</div>
     </div>
 
-    <!-- Work Experience Content -->
     <div id="workExperienceSection" class="tab-content active">
         <h3>Add Experience</h3>
-        
+
         <div class="form-container">
             <div class="input-wrapper">
                 <div class="left-inputs">
@@ -34,7 +33,7 @@
                         <label for="startDate">Start Date:</label>
                         <input type="date" id="startDate">
                     </div>
-        
+
                     <div class="input-container">
                         <label for="endDate">End Date:</label>
                         <input type="date" id="endDate">
@@ -56,10 +55,9 @@
         <ul id="workExperienceList"></ul>
     </div>
 
-    <!-- Social Media Content -->
     <div id="socialMediaSection" class="tab-content">
         <h3>Add Social Media</h3>
-        
+
         <div class="form-container">
             <div class="input-container">
                 <label for="platformName">Platform Name:</label>
@@ -78,7 +76,29 @@
         <ul id="socialMediaList"></ul>
     </div>
 
-<script src="dashboard.js"></script>
+    <div id="coverLetterSection" class="tab-content">
+        <h3>Add Cover Letter</h3>
+
+        <div class="form-container">
+            <div class="input-container">
+                <label for="coverLetterName">Cover Letter Name:</label>
+                <input type="text" id="coverLetterName" placeholder="Enter cover letter name">
+            </div>
+
+            <div class="input-container">
+                <label for="coverLetterContent">Cover Letter Content:</label>
+                <textarea id="coverLetterContent" placeholder="Enter cover letter content"></textarea>
+                <p id="coverLetterHelpText" style="display: none; font-size: 0.8em; color: gray;">
+                    You can use placeholders like {{companyName}} and {{jobTitle}} to automatically insert data.
+            </div>
+
+            <button id="saveCoverLetter">Save</button>
+        </div>
+
+        <h3>Saved Cover Letters</h3>
+        <ul id="coverLetterList"></ul>
+    </div>
+
+    <script src="dashboard.js"></script>
 </body>
 </html>
-

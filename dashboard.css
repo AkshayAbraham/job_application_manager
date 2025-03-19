@@ -328,3 +328,44 @@ input, textarea {
 .delete-btn:hover {
     background-color: #cc0000;
 }
+
+/* Cover Letter List Styling (Existing) */
+#coverLetterList {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 90%;
+    margin-left: 0;
+}
+
+/* Individual Cover Letter Card (Existing) */
+.cover-letter-item {
+    background: #2A2A2A;
+    padding: 15px;
+    border-radius: 20px;
+    color: #CCCCCC;
+    width: 100%;
+    margin: 0;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Cover Letter Header Styling (Existing) */
+.cover-letter-header {
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Cover Letter Title Styling (Existing) */
+.cover-letter-title {
+    font-size: 16px;
+    color: #CCCCCC;
+}
+
