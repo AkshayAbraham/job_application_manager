@@ -210,3 +210,121 @@ button:hover {
 }
 
 
+/* Social Media List Styling */
+#socialMediaList {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 90%;
+    margin-left: 0;
+}
+
+/* Individual Social Media Card */
+.social-media-item {
+    background: #2A2A2A;
+    padding: 15px;
+    border-radius: 20px;
+    color: #CCCCCC;
+    width: 100%;
+    margin: 0;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Adjust form container to ensure balanced spacing */
+.form-container {
+    width: 100%;
+    max-width: 820px;
+    background: #2A2A2A;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    
+}
+
+/* Ensure equal left and right spacing for input fields */
+.input-wrapper {
+    display: flex;
+    gap: 40px; /* Space between left and right sections */
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    padding: 0 20px; /* Add padding to ensure equal space on both sides */
+    box-sizing: border-box;
+}
+
+/* Left section (Dates & Company Name) */
+.left-inputs, 
+.right-inputs {
+    flex: 1; /* Ensure both sections take equal width */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Ensure input fields have equal left & right padding */
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px; /* Rounded corners */
+    border: 1px solid #cccccc;
+    background-color: #2A2A2A;
+    color: white;
+    font-size: 14px;
+    box-sizing: border-box; /* Includes padding & border in width calculation */
+}
+
+
+/* Platform Name Styling */
+.platform-header {
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* URL & Description */
+.platform-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    color: #CCCCCC;
+    margin-top: 5px;
+}
+
+.platform-info a {
+    color: #00A8E8;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.platform-info a:hover {
+    text-decoration: underline;
+}
+
+/* Delete Button */
+.delete-btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 20px;
+    height: 40px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    align-self: flex-end;
+    margin-top: 10px;
+}
+
+.delete-btn:hover {
+    background-color: #cc0000;
+}

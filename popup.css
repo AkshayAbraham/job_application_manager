@@ -510,4 +510,21 @@ input[type="text"]:focus {
     background-color: #0056b3;
 }
 
+#socialMediaIcon {
+    position: fixed;
+    bottom: 0px; /* Adjusted to not overlap with the briefcase icon */
+    left: 45px;
+    cursor: pointer;
+    padding: 10px;
+}
+
+#socialMediaBtn {
+    font-size: 17px;
+    transition: transform 0.2s ease-in-out;
+}
+
+#socialMediaBtn:hover {
+    transform: scale(1.2);
+}
+
 

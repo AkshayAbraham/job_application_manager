@@ -385,4 +385,23 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 0); // Delay of 0ms, but still allows the browser to finish rendering
 });
 
+document.addEventListener("DOMContentLoaded", function() {
+    const socialMediaBtn = document.getElementById("socialMediaBtn");
+    const socialMediaPage = document.getElementById("socialMediaPage");
+    const mainContainer = document.getElementById("mainContainer");
+    const socialMediaBackIcon = document.getElementById("socialMediaBackIcon");
+
+    // Show Social Media Page and Hide Main Container
+    socialMediaBtn.addEventListener("click", function() {
+        mainContainer.style.display = "none";
+        socialMediaPage.style.display = "block";
+    });
+
+    // Go back to Main Container from Social Media Page
+    socialMediaBackIcon.addEventListener("click", function() {
+        socialMediaPage.style.display = "none";
+        mainContainer.style.display = "block";
+    });
+});
+
 

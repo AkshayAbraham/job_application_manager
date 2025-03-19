@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <title>Dashboard</title>
-    <link rel="stylesheet" href="dashboard.css"> <!-- Use a separate CSS file -->
+    <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -10,8 +10,7 @@
     <!-- Tabs Navigation -->
     <div class="tabs-container">
         <div class="tab active" id="workExperienceTab">Work Experience</div>
-        <div class="tab" id="educationTab">Education</div>
-        <!-- Add more tabs if needed -->
+        <div class="tab" id="socialMediaTab">Social Media</div>
     </div>
 
     <!-- Work Experience Content -->
@@ -19,9 +18,7 @@
         <h3>Add Experience</h3>
         
         <div class="form-container">
-        
             <div class="input-wrapper">
-                <!-- Left Side: Dates & Company Name -->
                 <div class="left-inputs">
                     <div class="input-container">
                         <label for="jobTitle">Job Title:</label>
@@ -43,8 +40,7 @@
                         <input type="date" id="endDate">
                     </div>
                 </div>
-        
-                <!-- Right Side: Job Description -->
+
                 <div class="right-inputs">
                     <div class="input-container">
                         <label for="description">Job Description:</label>
@@ -52,16 +48,37 @@
                     </div>
                 </div>
             </div>
-        
+
             <button id="saveWorkExperience">Save</button>
         </div>
-        
 
-        <!-- Display Saved Work Experiences -->
         <h3>Saved Work Experiences</h3>
         <ul id="workExperienceList"></ul>
+    </div>
+
+    <!-- Social Media Content -->
+    <div id="socialMediaSection" class="tab-content">
+        <h3>Add Social Media</h3>
+        
+        <div class="form-container">
+            <div class="input-container">
+                <label for="platformName">Platform Name:</label>
+                <input type="text" id="platformName" placeholder="Enter platform name">
+            </div>
+
+            <div class="input-container">
+                <label for="socialMediaURL">Profile URL:</label>
+                <input type="url" id="socialMediaURL" placeholder="Enter profile URL">
+            </div>
+
+            <button id="saveSocialMedia">Save</button>
+        </div>
+
+        <h3>Saved Social Media Links</h3>
+        <ul id="socialMediaList"></ul>
     </div>
 
 <script src="dashboard.js"></script>
 </body>
 </html>
+

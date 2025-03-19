@@ -22,6 +22,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const saveButton = document.getElementById("saveWorkExperience");
     const workExperienceList = document.getElementById("workExperienceList");
 
+    // Social Media Elements
+    const platformNameInput = document.getElementById("platformName");
+    const socialMediaURLInput = document.getElementById("socialMediaURL");
+    const saveSocialMediaButton = document.getElementById("saveSocialMedia");
+    const socialMediaList = document.getElementById("socialMediaList");
+
     // Save Work Experience
     function saveWorkExperience() {
         const startDate = startDateInput.value;
@@ -100,9 +106,80 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function saveSocialMedia() {
+        const platformName = platformNameInput.value.trim();
+        const socialMediaURL = socialMediaURLInput.value.trim();
+
+        if (!platformName || !socialMediaURL) {
+            alert("Please fill all fields!");
+            return;
+        }
+
+        const socialMedia = { platformName, socialMediaURL };
+
+        chrome.storage.local.get({ socialMediaLinks: [] }, (data) => {
+            const socialMediaLinks = data.socialMediaLinks;
+            socialMediaLinks.push(socialMedia);
+
+            chrome.storage.local.set({ socialMediaLinks }, () => {
+                console.log("Social Media Link Saved!");
+                displaySocialMediaLinks();
+            });
+        });
+
+        [platformNameInput, socialMediaURLInput].forEach(input => input.value = "");
+    }
+
+    // Display Social Media Links
+    function displaySocialMediaLinks() {
+        chrome.storage.local.get({ socialMediaLinks: [] }, (data) => {
+            socialMediaList.innerHTML = "";
+    
+            data.socialMediaLinks.forEach((item, index) => {
+                const li = document.createElement("li");
+                li.classList.add("social-media-item"); // Apply card styling
+                li.innerHTML = `
+                    <div class="platform-header">
+                        <i class="fa-brands fa-${item.platformName.toLowerCase()}"></i>
+                        <span class="job-title">${item.platformName}</span>
+                    </div>
+                    <div class="platform-info">
+                        <i class="fa-solid fa-link"></i>
+                        <a href="${item.socialMediaURL}" target="_blank">${item.socialMediaURL}</a>
+                    </div>
+                    ${item.description ? `<pre class="platform-description">${item.description}</pre>` : ""}
+                    <button class="delete-btn" data-index="${index}" data-type="social">Delete</button>
+                `;
+                socialMediaList.appendChild(li);
+            });
+    
+            document.querySelectorAll(".delete-btn[data-type='social']").forEach(button => {
+                button.addEventListener("click", deleteSocialMedia);
+            });
+        });
+    }
+    
+
+    // Delete Social Media Link
+    function deleteSocialMedia(event) {
+        const index = event.target.getAttribute("data-index");
+
+        chrome.storage.local.get({ socialMediaLinks: [] }, (data) => {
+            let socialMediaLinks = data.socialMediaLinks;
+            socialMediaLinks.splice(index, 1);
+
+            chrome.storage.local.set({ socialMediaLinks }, () => {
+                console.log("Social Media Link Deleted!");
+                displaySocialMediaLinks();
+            });
+        });
+    }
+
     // Event Listeners
     saveButton.addEventListener("click", saveWorkExperience);
+    saveSocialMediaButton.addEventListener("click", saveSocialMedia);
 
     // Load Saved Experiences on Page Load
     displayWorkExperiences();
+    displaySocialMediaLinks();
 });
