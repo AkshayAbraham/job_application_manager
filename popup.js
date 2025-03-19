@@ -390,6 +390,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const socialMediaPage = document.getElementById("socialMediaPage");
     const mainContainer = document.getElementById("mainContainer");
     const socialMediaBackIcon = document.getElementById("socialMediaBackIcon");
+    const dashboardIcon = document.getElementById("dashboardIcon");
+    const socialMediaIcon = document.getElementById("socialMediaIcon"); // Assuming you have this icon in your dashboard page
 
     // Show Social Media Page and Hide Main Container
     socialMediaBtn.addEventListener("click", function() {
@@ -401,7 +403,76 @@ document.addEventListener("DOMContentLoaded", function() {
     socialMediaBackIcon.addEventListener("click", function() {
         socialMediaPage.style.display = "none";
         mainContainer.style.display = "block";
+        dashboardIcon.style.display = "block"; // Show dashboard icon
+        socialMediaIcon.style.display = "block"; // Show the socialMediaIcon
     });
+
+    const popupSocialMediaList = document.getElementById("popupSocialMediaList");
+
+    // Function to display social media platforms in popup
+    function displaySocialMediaInPopup() {
+        chrome.storage.local.get({ socialMediaLinks: [] }, (data) => {
+            popupSocialMediaList.innerHTML = ""; // Clear any existing content
+
+            if (data.socialMediaLinks.length === 0) {
+                popupSocialMediaList.innerHTML = "<p>No social media links added yet.</p>";
+                return;
+            }
+
+            data.socialMediaLinks.forEach((item) => {
+                const card = document.createElement("div");
+                card.classList.add("experience-card");
+                card.innerHTML = `
+                    <div class="experience-header">
+                        <span class="platform-name">${item.platformName}</span>
+                    </div>
+                    <div class="experience-info">
+                        <button class="copy-btn" data-url="${item.socialMediaURL}">
+                            Copy URL
+                        </button>
+                    </div>
+                `;
+                popupSocialMediaList.appendChild(card);
+            });
+
+            // Add event listeners to copy buttons
+            document.querySelectorAll(".copy-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    const url = this.getAttribute("data-url");
+                    const originalText = this.textContent;
+                    const originalColor = this.style.backgroundColor;
+                    const buttonElement = this;
+                    navigator.clipboard.writeText(url).then(() => {
+                        buttonElement.textContent = "URL Copied!";
+                        buttonElement.style.backgroundColor = "#0056b3";
+                        setTimeout(() => {
+                            buttonElement.textContent = originalText;
+                            buttonElement.style.backgroundColor = originalColor;
+                        }, 3000);
+                    }).catch(err => {
+                        console.error("Failed to copy: ", err);
+                    });
+                });
+            });
+        });
+    }
+
+    // Handle the socialMediaIcon click to navigate to the social media page
+    socialMediaIcon.addEventListener("click", function () {
+        mainContainer.style.display = "none";
+        socialMediaPage.style.display = "block";
+        dashboardIcon.style.display = "none"; // Hide dashboard icon
+        socialMediaIcon.style.display = "none"; // Hide socialMediaIcon
+        displaySocialMediaInPopup();
+    });
+
+    // Ensure social media page displays correctly on load
+    setTimeout(() => {
+        if (mainContainer.style.display !== "none") {
+            dashboardIcon.style.display = "block";
+            socialMediaIcon.style.display = "block"; // Show socialMediaIcon on main page load
+        }
+    }, 0);
 });
 
 
