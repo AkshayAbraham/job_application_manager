@@ -144,3 +144,103 @@ chrome.commands.onCommand.addListener((command) => {
       });
     }
   });
+
+chrome.commands.onCommand.addListener((command) => {
+  if (command === "save_job_data") {
+    // Get the selected text from the active tab
+    chrome.tabs.executeScript({
+      code: "window.getSelection().toString();"
+    }, (selection) => {
+      const selectedText = selection[0];
+      if (selectedText) {
+        // Prompt the user to specify what the selected text represents (e.g., jobTitle, companyName)
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          chrome.scripting.executeScript({
+            target: { tabId: tabs[0].id },
+            func: (selectedText) => {
+              const type = prompt(`What does "${selectedText}" represent? (e.g., jobTitle, companyName)`);
+              return type ? { type, value: selectedText } : null;
+            },
+            args: [selectedText]
+          }, (result) => {
+            if (result && result[0].result) {
+              const { type, value } = result[0].result;
+              // Save the selected text to chrome.storage.local
+              chrome.storage.local.get({ savedData: {} }, (data) => {
+                const savedData = data.savedData;
+                savedData[type] = value; // Save the selected text with its type
+                chrome.storage.local.set({ savedData }, () => {
+                  console.log(`Saved ${type}: ${value}`);
+                });
+              });
+            }
+          });
+        });
+      }
+    });
+  }
+});
+
+chrome.commands.onCommand.addListener((command) => {
+    console.log(`Command received: ${command}`); // Debugging line
+    if (command === "save_job_data") {
+      console.log("Hotkey pressed: Ctrl+Shift+Z"); // Debugging line
+  
+      // Get the currently active tab
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs.length === 0) {
+          console.error("No active tab found"); // Debugging line
+          return;
+        }
+  
+        const activeTab = tabs[0];
+  
+        // Execute a script to get the selected text
+        chrome.scripting.executeScript({
+          target: { tabId: activeTab.id },
+          func: () => {
+            return window.getSelection().toString();
+          }
+        }, (selection) => {
+          if (chrome.runtime.lastError) {
+            console.error("Error executing script:", chrome.runtime.lastError); // Debugging line
+            return;
+          }
+  
+          const selectedText = selection[0].result;
+          console.log("Selected text:", selectedText); // Debugging line
+  
+          if (selectedText) {
+            // Prompt the user to specify what the selected text represents
+            chrome.scripting.executeScript({
+              target: { tabId: activeTab.id },
+              func: (selectedText) => {
+                const type = prompt(`What does "${selectedText}" represent? (e.g., jobTitle, companyName)`);
+                return type ? { type, value: selectedText } : null;
+              },
+              args: [selectedText]
+            }, (result) => {
+              if (chrome.runtime.lastError) {
+                console.error("Error executing script:", chrome.runtime.lastError); // Debugging line
+                return;
+              }
+  
+              if (result && result[0].result) {
+                const { type, value } = result[0].result;
+                console.log(`Saving ${type}: ${value}`); // Debugging line
+  
+                // Save the selected text to chrome.storage.local
+                chrome.storage.local.get({ savedData: {} }, (data) => {
+                  const savedData = data.savedData;
+                  savedData[type] = value; // Save the selected text with its type
+                  chrome.storage.local.set({ savedData }, () => {
+                    console.log(`Saved ${type}: ${value}`);
+                  });
+                });
+              }
+            });
+          }
+        });
+      });
+    }
+  });

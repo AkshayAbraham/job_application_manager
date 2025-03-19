@@ -495,4 +495,197 @@ document.addEventListener("DOMContentLoaded", function() {
     }, 0);
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    const socialMediaBtn = document.getElementById("socialMediaBtn");
+    const socialMediaPage = document.getElementById("socialMediaPage");
+    const mainContainer = document.getElementById("mainContainer");
+    const socialMediaBackIcon = document.getElementById("socialMediaBackIcon");
+    const dashboardIcon = document.getElementById("dashboardIcon");
+    const socialMediaIcon = document.getElementById("socialMediaIcon");
+    const coverLetterIcon = document.getElementById("coverLetterIcon");
 
+    // Show Social Media Page and Hide Main Container
+    socialMediaBtn.addEventListener("click", function () {
+        mainContainer.style.display = "none";
+        socialMediaPage.style.display = "block";
+    });
+
+    // Go back to Main Container from Social Media Page
+    socialMediaBackIcon.addEventListener("click", function () {
+        socialMediaPage.style.display = "none";
+        mainContainer.style.display = "block";
+        dashboardIcon.style.display = "block";
+        socialMediaIcon.style.display = "block";
+        coverLetterIcon.style.display = "block";
+    });
+
+    // Listen for messages from the background script
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        if (message.action === "showSocialMediaPage") {
+            mainContainer.style.display = "none";
+            socialMediaPage.style.display = "block";
+            dashboardIcon.style.display = "none";
+            socialMediaIcon.style.display = "none";
+            coverLetterIcon.style.display = "none";
+            displaySocialMediaInPopup();
+        }
+    });
+
+    // Function to display social media platforms in popup
+    function displaySocialMediaInPopup() {
+        chrome.storage.local.get({ socialMediaLinks: [] }, (data) => {
+            popupSocialMediaList.innerHTML = "";
+
+            if (data.socialMediaLinks.length === 0) {
+                popupSocialMediaList.innerHTML = "<p>No social media links added yet.</p>";
+                return;
+            }
+
+            data.socialMediaLinks.forEach((item) => {
+                const card = document.createElement("div");
+                card.classList.add("experience-card");
+                card.innerHTML = `
+                    <div class="experience-header">
+                        <span class="platform-name">${item.platformName}</span>
+                    </div>
+                    <div class="experience-info">
+                        <button class="copy-btn" data-url="${item.socialMediaURL}">
+                            Copy URL
+                        </button>
+                    </div>
+                `;
+                popupSocialMediaList.appendChild(card);
+            });
+
+            document.querySelectorAll(".copy-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    const url = this.getAttribute("data-url");
+                    const originalText = this.textContent;
+                    const originalColor = this.style.backgroundColor;
+                    const buttonElement = this;
+                    navigator.clipboard.writeText(url).then(() => {
+                        buttonElement.textContent = "URL Copied!";
+                        buttonElement.style.backgroundColor = "#0056b3";
+                        setTimeout(() => {
+                            buttonElement.textContent = originalText;
+                            buttonElement.style.backgroundColor = originalColor;
+                        }, 3000);
+                    }).catch(err => {
+                        console.error("Failed to copy: ", err);
+                    });
+                });
+            });
+        });
+    }
+
+    // Handle the socialMediaIcon click to navigate to the social media page
+    socialMediaIcon.addEventListener("click", function () {
+        mainContainer.style.display = "none";
+        socialMediaPage.style.display = "block";
+        dashboardIcon.style.display = "none";
+        socialMediaIcon.style.display = "none";
+        coverLetterIcon.style.display = "none";
+        displaySocialMediaInPopup();
+    });
+
+    // Ensure social media page displays correctly on load
+    setTimeout(() => {
+        if (mainContainer.style.display !== "none") {
+            dashboardIcon.style.display = "block";
+            socialMediaIcon.style.display = "block";
+        }
+    }, 0);
+
+    // Cover Letter Logic
+    const coverLetterBtn = document.getElementById('coverLetterBtn');
+    const coverLetterPage = document.getElementById('coverLetterPage');
+    const coverLetterBackIcon = document.getElementById('coverLetterBackIcon');
+
+    coverLetterBtn.addEventListener('click', function () {
+        mainContainer.style.display = 'none';
+        coverLetterPage.style.display = 'block';
+        socialMediaIcon.style.display = 'none'; // Hide socialMediaIcon
+        coverLetterIcon.style.display = 'none'; // Hide coverLetterIcon
+        displayPopupCoverLetters();
+    });
+
+    coverLetterBackIcon.addEventListener('click', function () {
+        coverLetterPage.style.display = 'none';
+        mainContainer.style.display = 'block';
+        socialMediaIcon.style.display = 'block'; // Show socialMediaIcon
+        coverLetterIcon.style.display = 'block'; // Show coverLetterIcon
+    });
+
+    function displayPopupCoverLetters() {
+        const popupCoverLetterList = document.getElementById("popupCoverLetterList");
+        popupCoverLetterList.innerHTML = "";
+
+        chrome.storage.local.get({ coverLetters: [], savedData: {} }, (data) => {
+            const { coverLetters, savedData } = data;
+
+            coverLetters.forEach((item, index) => {
+                const coverLetterCard = document.createElement("div");
+                coverLetterCard.classList.add("experience-card");
+
+                coverLetterCard.innerHTML = `
+                    <div class="experience-header">
+                        <i class="fa-solid fa-file-alt"></i>
+                        <span class="job-title">${item.coverLetterName}</span>
+                    </div>
+                    <div class="experience-info">
+                        <button class="generate-btn" data-index="${index}">Generate</button>
+                    </div>
+                    <div id="updatedCoverLetter-${index}" style="display: none;">
+                        <p>Cover letter updated with saved data.</p>
+                        <textarea id="updatedContent-${index}" readonly></textarea>
+                        <button class="copy-updated-btn" data-index="${index}">Copy Updated Cover Letter</button>
+                    </div>
+                `;
+
+                popupCoverLetterList.appendChild(coverLetterCard);
+            });
+
+            document.querySelectorAll('.generate-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const index = this.getAttribute('data-index');
+                    const updatedCoverLetterDiv = document.getElementById(`updatedCoverLetter-${index}`);
+                    const updatedContentTextarea = document.getElementById(`updatedContent-${index}`);
+
+                    // Retrieve the saved data (e.g., jobTitle, companyName)
+                    const { jobTitle, companyName } = savedData;
+
+                    // Update the cover letter content with the saved data
+                    const originalContent = coverLetters[index].coverLetterContent;
+                    const updatedContent = originalContent
+                        .replace(/{{jobTitle}}/g, jobTitle || "Job Title")
+                        .replace(/{{companyName}}/g, companyName || "Company Name");
+
+                    // Display the updated content
+                    updatedContentTextarea.value = updatedContent;
+                    updatedCoverLetterDiv.style.display = 'block';
+                });
+            });
+
+            document.querySelectorAll('.copy-updated-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const index = this.getAttribute('data-index');
+                    const updatedContentTextarea = document.getElementById(`updatedContent-${index}`);
+                    const originalText = this.textContent;
+                    const originalColor = this.style.backgroundColor;
+                    const buttonElement = this;
+
+                    navigator.clipboard.writeText(updatedContentTextarea.value).then(() => {
+                        buttonElement.textContent = "Copied!";
+                        buttonElement.style.backgroundColor = "#0056b3";
+                        setTimeout(() => {
+                            buttonElement.textContent = originalText;
+                            buttonElement.style.backgroundColor = originalColor;
+                        }, 3000);
+                    }).catch(err => {
+                        console.error("Failed to copy: ", err);
+                    });
+                });
+            });
+        });
+    }
+});

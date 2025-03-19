@@ -20,6 +20,12 @@
         "default": "Ctrl+Shift+X"
       },
       "description": "Show Social Media Page"
+    },
+    "save_job_data": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Z"
+      },
+      "description": "Save job title and company name"
     }
   },
   "action": {
