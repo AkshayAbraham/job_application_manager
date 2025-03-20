@@ -595,97 +595,121 @@ document.addEventListener("DOMContentLoaded", function () {
             socialMediaIcon.style.display = "block";
         }
     }, 0);
+});
 
-    // Cover Letter Logic
-    const coverLetterBtn = document.getElementById('coverLetterBtn');
-    const coverLetterPage = document.getElementById('coverLetterPage');
-    const coverLetterBackIcon = document.getElementById('coverLetterBackIcon');
+// Cover Letter Logic
+const coverLetterBtn = document.getElementById('coverLetterBtn');
+const coverLetterPage = document.getElementById('coverLetterPage');
+const coverLetterBackIcon = document.getElementById('coverLetterBackIcon');
+const dashboardIcon = document.getElementById("dashboardIcon");
 
-    coverLetterBtn.addEventListener('click', function () {
-        mainContainer.style.display = 'none';
-        coverLetterPage.style.display = 'block';
-        socialMediaIcon.style.display = 'none'; // Hide socialMediaIcon
-        coverLetterIcon.style.display = 'none'; // Hide coverLetterIcon
-        displayPopupCoverLetters();
-    });
+coverLetterBtn.addEventListener('click', function () {
+    mainContainer.style.display = 'none';
+    coverLetterPage.style.display = 'block';
+    socialMediaIcon.style.display = 'none'; // Hide socialMediaIcon
+    coverLetterIcon.style.display = 'none'; // Hide coverLetterIcon
+    dashboardIcon.style.display = 'none';
+    displayPopupCoverLetters();
+});
 
-    coverLetterBackIcon.addEventListener('click', function () {
-        coverLetterPage.style.display = 'none';
-        mainContainer.style.display = 'block';
-        socialMediaIcon.style.display = 'block'; // Show socialMediaIcon
-        coverLetterIcon.style.display = 'block'; // Show coverLetterIcon
-    });
+coverLetterBackIcon.addEventListener('click', function () {
+    coverLetterPage.style.display = 'none';
+    mainContainer.style.display = 'block';
+    socialMediaIcon.style.display = 'block'; // Show socialMediaIcon
+    coverLetterIcon.style.display = 'block'; // Show coverLetterIcon
+    dashboardIcon.style.display = 'block';
+});
 
-    function displayPopupCoverLetters() {
-        const popupCoverLetterList = document.getElementById("popupCoverLetterList");
-        popupCoverLetterList.innerHTML = "";
+function displayPopupCoverLetters() {
+    const popupCoverLetterList = document.getElementById("popupCoverLetterList");
+    popupCoverLetterList.innerHTML = "";
 
-        chrome.storage.local.get({ coverLetters: [], savedData: {} }, (data) => {
-            const { coverLetters, savedData } = data;
+    chrome.storage.local.get({ coverLetters: [], savedData: {} }, (data) => {
+        const { coverLetters, savedData } = data;
 
-            coverLetters.forEach((item, index) => {
-                const coverLetterCard = document.createElement("div");
-                coverLetterCard.classList.add("experience-card");
+        coverLetters.forEach((item, index) => {
+            const coverLetterCard = document.createElement("div");
+            coverLetterCard.classList.add("experience-card");
 
-                coverLetterCard.innerHTML = `
-                    <div class="experience-header">
-                        <i class="fa-solid fa-file-alt"></i>
-                        <span class="job-title">${item.coverLetterName}</span>
-                    </div>
-                    <div class="experience-info">
-                        <button class="generate-btn" data-index="${index}">Generate</button>
-                    </div>
-                    <div id="updatedCoverLetter-${index}" style="display: none;">
-                        <p>Cover letter updated with saved data.</p>
-                        <textarea id="updatedContent-${index}" readonly></textarea>
-                        <button class="copy-updated-btn" data-index="${index}">Copy Updated Cover Letter</button>
-                    </div>
-                `;
+            coverLetterCard.innerHTML = `
+    <div class="experience-header" id="experience-header-${index}">
+        <i class="fa-solid fa-file-alt" id="file-icon-${index}"></i>
+        <span class="job-title" id="cover-letter-title-${index}">${item.coverLetterName}</span>
+    </div>
+    <div class="experience-info">
+        <button class="generate-btn" data-index="${index}">Generate & Copy</button>
+        <div style="text-align: center;">
+            <i class="fa-solid fa-clipboard animated-clipboard" id="clipboard-icon-${index}" style="display: none; font-size: 2em; margin-bottom: 10px;"></i>
+        </div>
+        <p id="generation-message-${index}" style="display: none; color: #cccccc; text-align: center;">
+            Cover letter for <span id="job-title-message-${index}" style="color: #cccccc; font-weight: bold;"></span> at <span id="company-name-message-${index}" style="font-weight: bold;"></span> has been successfully generated and copied to clipboard.
+        </p>
+    </div>
+    <div id="updatedCoverLetter-${index}" style="display: none;">
+        <textarea id="updatedContent-${index}" readonly></textarea>
+    </div>
+`;
 
-                popupCoverLetterList.appendChild(coverLetterCard);
-            });
+            popupCoverLetterList.appendChild(coverLetterCard);
+        });
 
-            document.querySelectorAll('.generate-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    const index = this.getAttribute('data-index');
-                    const updatedCoverLetterDiv = document.getElementById(`updatedCoverLetter-${index}`);
-                    const updatedContentTextarea = document.getElementById(`updatedContent-${index}`);
+        document.querySelectorAll('.generate-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const index = this.getAttribute('data-index');
+                const updatedCoverLetterDiv = document.getElementById(`updatedCoverLetter-${index}`);
+                const updatedContentTextarea = document.getElementById(`updatedContent-${index}`);
+                const generationMessage = document.getElementById(`generation-message-${index}`);
+                const generateButton = this;
+                const jobTitleMessage = document.getElementById(`job-title-message-${index}`);
+                const companyNameMessage = document.getElementById(`company-name-message-${index}`);
+                const clipboardIcon = document.getElementById(`clipboard-icon-${index}`);
+                const fileIcon = document.getElementById(`file-icon-${index}`);
+                const coverLetterTitle = document.getElementById(`cover-letter-title-${index}`);
+                const experienceHeader = document.getElementById(`experience-header-${index}`);
 
-                    // Retrieve the saved data (e.g., jobTitle, companyName)
-                    const { jobTitle, companyName } = savedData;
+                // Retrieve the saved data (e.g., jobTitle, companyName)
+                const { jobTitle, companyName } = savedData;
 
-                    // Update the cover letter content with the saved data
-                    const originalContent = coverLetters[index].coverLetterContent;
-                    const updatedContent = originalContent
-                        .replace(/{{jobTitle}}/g, jobTitle || "Job Title")
-                        .replace(/{{companyName}}/g, companyName || "Company Name");
+                // Update the cover letter content with the saved data
+                const originalContent = coverLetters[index].coverLetterContent;
+                const updatedContent = originalContent
+                    .replace(/{{jobTitle}}/g, jobTitle || "Job Title")
+                    .replace(/{{companyName}}/g, companyName || "Company Name");
 
-                    // Display the updated content
-                    updatedContentTextarea.value = updatedContent;
-                    updatedCoverLetterDiv.style.display = 'block';
+                // Display the updated content
+                updatedContentTextarea.value = updatedContent;
+                updatedCoverLetterDiv.style.display = 'block';
+
+                // Automatically copy the updated content to clipboard after generation
+                navigator.clipboard.writeText(updatedContentTextarea.value).then(() => {
+                    // Show success message
+                    jobTitleMessage.textContent = jobTitle || "Job Title";
+                    companyNameMessage.textContent = companyName || "Company Name";
+                    generationMessage.style.display = 'block';
+                    generateButton.style.display = 'none';
+                    clipboardIcon.style.display = 'block';
+                    fileIcon.style.display = 'none';
+                    coverLetterTitle.style.display = 'none';
+                    experienceHeader.style.display = 'none';
+
+                    // Hide message and show button after 10 seconds
+                    setTimeout(() => {
+                        generationMessage.style.display = 'none';
+                        generateButton.style.display = 'block';
+                        clipboardIcon.style.display = 'none';
+                        fileIcon.style.display = 'block';
+                        coverLetterTitle.style.display = 'block';
+                        experienceHeader.style.display = 'flex';
+                    }, 10000);
+
+                }).catch(err => {
+                    console.error("Failed to copy: ", err);
                 });
-            });
 
-            document.querySelectorAll('.copy-updated-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    const index = this.getAttribute('data-index');
-                    const updatedContentTextarea = document.getElementById(`updatedContent-${index}`);
-                    const originalText = this.textContent;
-                    const originalColor = this.style.backgroundColor;
-                    const buttonElement = this;
+                // Directly hide the updatedContent area.
+                updatedContentTextarea.style.display = 'none';
 
-                    navigator.clipboard.writeText(updatedContentTextarea.value).then(() => {
-                        buttonElement.textContent = "Copied!";
-                        buttonElement.style.backgroundColor = "#0056b3";
-                        setTimeout(() => {
-                            buttonElement.textContent = originalText;
-                            buttonElement.style.backgroundColor = originalColor;
-                        }, 3000);
-                    }).catch(err => {
-                        console.error("Failed to copy: ", err);
-                    });
-                });
             });
         });
-    }
-});
+    });
+}

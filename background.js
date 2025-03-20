@@ -145,102 +145,161 @@ chrome.commands.onCommand.addListener((command) => {
     }
   });
 
-chrome.commands.onCommand.addListener((command) => {
-  if (command === "save_job_data") {
-    // Get the selected text from the active tab
-    chrome.tabs.executeScript({
-      code: "window.getSelection().toString();"
-    }, (selection) => {
-      const selectedText = selection[0];
-      if (selectedText) {
-        // Prompt the user to specify what the selected text represents (e.g., jobTitle, companyName)
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-          chrome.scripting.executeScript({
-            target: { tabId: tabs[0].id },
-            func: (selectedText) => {
-              const type = prompt(`What does "${selectedText}" represent? (e.g., jobTitle, companyName)`);
-              return type ? { type, value: selectedText } : null;
-            },
-            args: [selectedText]
-          }, (result) => {
-            if (result && result[0].result) {
-              const { type, value } = result[0].result;
-              // Save the selected text to chrome.storage.local
-              chrome.storage.local.get({ savedData: {} }, (data) => {
-                const savedData = data.savedData;
-                savedData[type] = value; // Save the selected text with its type
-                chrome.storage.local.set({ savedData }, () => {
-                  console.log(`Saved ${type}: ${value}`);
-                });
-              });
-            }
-          });
-        });
-      }
-    });
-  }
-});
-
-chrome.commands.onCommand.addListener((command) => {
-    console.log(`Command received: ${command}`); // Debugging line
+  chrome.commands.onCommand.addListener((command) => {
+    console.log(`Command received: ${command}`);
     if (command === "save_job_data") {
-      console.log("Hotkey pressed: Ctrl+Shift+Z"); // Debugging line
-  
-      // Get the currently active tab
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        if (tabs.length === 0) {
-          console.error("No active tab found"); // Debugging line
-          return;
-        }
-  
-        const activeTab = tabs[0];
-  
-        // Execute a script to get the selected text
-        chrome.scripting.executeScript({
-          target: { tabId: activeTab.id },
-          func: () => {
-            return window.getSelection().toString();
-          }
-        }, (selection) => {
-          if (chrome.runtime.lastError) {
-            console.error("Error executing script:", chrome.runtime.lastError); // Debugging line
-            return;
-          }
-  
-          const selectedText = selection[0].result;
-          console.log("Selected text:", selectedText); // Debugging line
-  
-          if (selectedText) {
-            // Prompt the user to specify what the selected text represents
-            chrome.scripting.executeScript({
-              target: { tabId: activeTab.id },
-              func: (selectedText) => {
-                const type = prompt(`What does "${selectedText}" represent? (e.g., jobTitle, companyName)`);
-                return type ? { type, value: selectedText } : null;
-              },
-              args: [selectedText]
-            }, (result) => {
-              if (chrome.runtime.lastError) {
-                console.error("Error executing script:", chrome.runtime.lastError); // Debugging line
+        console.log("Hotkey pressed: Ctrl+Shift+Z");
+
+        // Get the currently active tab
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            if (tabs.length === 0) {
+                console.error("No active tab found");
                 return;
-              }
-  
-              if (result && result[0].result) {
-                const { type, value } = result[0].result;
-                console.log(`Saving ${type}: ${value}`); // Debugging line
-  
-                // Save the selected text to chrome.storage.local
-                chrome.storage.local.get({ savedData: {} }, (data) => {
-                  const savedData = data.savedData;
-                  savedData[type] = value; // Save the selected text with its type
-                  chrome.storage.local.set({ savedData }, () => {
-                    console.log(`Saved ${type}: ${value}`);
-                  });
-                });
-              }
+            }
+
+            const activeTab = tabs[0];
+
+            // Execute a script to get the selected text
+            chrome.scripting.executeScript({
+                target: { tabId: activeTab.id },
+                func: () => window.getSelection().toString()
+            }, (selection) => {
+                if (chrome.runtime.lastError) {
+                    console.error("Error executing script:", chrome.runtime.lastError);
+                    return;
+                }
+
+                const selectedText = selection[0]?.result;
+                console.log("Selected text:", selectedText);
+
+                if (selectedText) {
+                    // Inject a styled alert box with dropdown
+                    chrome.scripting.executeScript({
+                        target: { tabId: activeTab.id },
+                        func: (selectedText) => {
+                            // Remove any existing popup
+                            document.getElementById("selectionPopup")?.remove();
+
+                            // Create container
+                            const popup = document.createElement("div");
+                            popup.id = "selectionPopup";
+                            popup.innerHTML = `
+                                <style>
+                                    .popup-container {
+                                        all: unset; /* Reset all inherited styles */
+                                        position: fixed;
+                                        top: 10px;
+                                        left: 50%;
+                                        transform: translateX(-50%);
+                                        background: #1E1E1E;
+                                        color: white;
+                                        padding: 20px;
+                                        border-radius: 12px;
+                                        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+                                        z-index: 10000;
+                                        font-family: Arial, sans-serif !important;
+                                        width: 320px;
+                                        display: flex;
+                                        flex-direction: column;
+                                        align-items: center;
+                                        text-align: center;
+                                    }
+                                    .popup-text {
+                                        font-size: 16px;
+                                        font-weight: bold;
+                                        margin-bottom: 12px;
+                                    }
+                                    .popup-select {
+                                        width: 100%;
+                                        padding: 10px;
+                                        margin-bottom: 12px;
+                                        border-radius: 8px;
+                                        border: 1px solid #ccc;
+                                        background: #fff;
+                                        color: black;
+                                        font-size: 14px;
+                                    }
+                                    .popup-buttons {
+                                        display: flex;
+                                        gap: 12px;
+                                        width: 100%;
+                                    }
+                                    .popup-button {
+                                        flex: 1;
+                                        padding: 10px;
+                                        font-size: 14px;
+                                        border: none;
+                                        border-radius: 8px;
+                                        cursor: pointer;
+                                        font-weight: bold;
+                                        text-align: center;
+                                    }
+                                    .save-btn {
+                                        background: #007bff;
+                                        color: white;
+                                    }
+                                    .save-btn:hover {
+                                        background: #0056b3;
+                                    }
+                                    .cancel-btn {
+                                        background: #DC3545;
+                                        color: white;
+                                    }
+                                    .cancel-btn:hover {
+                                        background: #A71D2A;
+                                    }
+                                </style>
+                                <div class="popup-container">
+                                    <div class="popup-text">The selected text is "<span style="color: #00A8E8;">${selectedText}</span>"</div>
+                                    <select class="popup-select" id="dataType">
+                                        <option value="jobTitle">Job Title</option>
+                                        <option value="companyName">Company Name</option>
+                                    </select>
+                                    <div class="popup-buttons">
+                                        <button class="popup-button save-btn" id="saveBtn">Save</button>
+                                        <button class="popup-button cancel-btn" id="cancelBtn">Cancel</button>
+                                    </div>
+                                </div>
+                            `;
+
+                            document.body.appendChild(popup);
+
+                            return new Promise((resolve) => {
+                                document.getElementById("saveBtn").addEventListener("click", () => {
+                                    const type = document.getElementById("dataType").value;
+                                    document.body.removeChild(popup);
+                                    resolve({ type, value: selectedText });
+                                });
+
+                                document.getElementById("cancelBtn").addEventListener("click", () => {
+                                    document.body.removeChild(popup);
+                                    resolve(null); // Cancel operation
+                                });
+                            });
+                        },
+                        args: [selectedText]
+                    }, (result) => {
+                        if (chrome.runtime.lastError) {
+                            console.error("Error executing script:", chrome.runtime.lastError);
+                            return;
+                        }
+
+                        if (result && result[0]?.result) {
+                            const { type, value } = result[0].result;
+                            console.log(`Saving ${type}: ${value}`);
+
+                            // Save the selected text to chrome.storage.local
+                            chrome.storage.local.get({ savedData: {} }, (data) => {
+                                const savedData = data.savedData;
+                                savedData[type] = value;
+                                chrome.storage.local.set({ savedData }, () => {
+                                    console.log(`Saved ${type}: ${value}`);
+                                });
+                            });
+                        }
+                    });
+                }
             });
-          }
         });
-      });
     }
-  });
+});
