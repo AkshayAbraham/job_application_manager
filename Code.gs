@@ -18,11 +18,34 @@ function getSheetId() {
     return sheetId;
 }
 
+// Helper function to format date as DD/MM/YYYY and ensure it's a date object
+function formatDate(dateString) {
+    if (!dateString) return new Date(); // If no date provided, use current date
+    
+    // Try parsing different date formats
+    let date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+        // If parsing fails, try with different formats
+        const parts = dateString.split(/[-/]/);
+        if (parts.length === 3) {
+            // Try DD/MM/YYYY format
+            date = new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+    }
+    
+    // If still not valid, use current date
+    if (isNaN(date.getTime())) {
+        date = new Date();
+    }
+    
+    return date;
+}
+
 // Function to handle new job applications
 function handleNewJobApplication(e) {
     try {
-        const sheetId = getSheetId(); // Replace with your actual sheet ID
-        const sheetName = "Sheet1"; // Replace with your sheet name
+        const sheetId = getSheetId();
+        const sheetName = "Sheet1";
 
         const sheet = SpreadsheetApp.openById(sheetId).getSheetByName(sheetName);
         if (!sheet) {
@@ -31,20 +54,22 @@ function handleNewJobApplication(e) {
 
         const data = JSON.parse(e.postData.contents);
 
+        // Format dates properly
+        const appliedDate = formatDate(data.appliedDate);
+        
         // Append the new job application data to the sheet
-        sheet.appendRow([
-            data.appliedDate,
-            data.jobTitle,
-            data.companyName,
-            data.companyLocation,
-            data.recruiterName,
-            data.recruiterLinkedIn,
-            data.recruiterEmail,
-            data.website,
-            data.networking,
-            data.comments,
-            data.applicationStatus
-        ]);
+        const newRow = sheet.getLastRow() + 1;
+        sheet.getRange(newRow, 1).setValue(appliedDate).setNumberFormat("dd/MM/yyyy"); // Applied Date
+        sheet.getRange(newRow, 2).setValue(data.jobTitle);
+        sheet.getRange(newRow, 3).setValue(data.companyName);
+        sheet.getRange(newRow, 4).setValue(data.companyLocation);
+        sheet.getRange(newRow, 5).setValue(data.recruiterName);
+        sheet.getRange(newRow, 6).setValue(data.recruiterLinkedIn);
+        sheet.getRange(newRow, 7).setValue(data.recruiterEmail);
+        sheet.getRange(newRow, 8).setValue(data.website);
+        sheet.getRange(newRow, 9).setValue(data.networking);
+        sheet.getRange(newRow, 10).setValue(data.comments);
+        sheet.getRange(newRow, 11).setValue(data.applicationStatus);
 
         return ContentService.createTextOutput("Success");
     } catch (error) {
@@ -56,7 +81,7 @@ function handleNewJobApplication(e) {
 // Function to handle status updates
 function handleUpdateStatus(e) {
     try {
-        const sheetId = getSheetId(); // Replace with your actual sheet ID
+        const sheetId = getSheetId();
         const sheet1 = SpreadsheetApp.openById(sheetId).getSheetByName("Sheet1");
         const sheet2 = SpreadsheetApp.openById(sheetId).getSheetByName("Sheet2");
 
@@ -66,7 +91,7 @@ function handleUpdateStatus(e) {
 
         const data = JSON.parse(e.postData.contents);
         const { jobTitle, companyName, status } = data;
-        const statusChangedDate = new Date().toLocaleDateString(); // Current date
+        const statusChangedDate = new Date(); // Current date as Date object
 
         const range = sheet1.getDataRange();
         const values = range.getValues();
@@ -99,8 +124,10 @@ function handleUpdateStatus(e) {
                 // Update the status of the first non-rejected row in Sheet 1
                 sheet1.getRange(i + 1, 11).setValue(status); // Update status in column K
 
-                // Update the Status Changed Date in Sheet 1
-                sheet1.getRange(i + 1, statusChangedDateColumnIndex || sheet1.getLastColumn()).setValue(statusChangedDate);
+                // Update the Status Changed Date in Sheet 1 with proper date format
+                sheet1.getRange(i + 1, statusChangedDateColumnIndex || sheet1.getLastColumn())
+                    .setValue(statusChangedDate)
+                    .setNumberFormat("dd/MM/yyyy");
 
                 // If status is "Selected for Interview", copy the row to Sheet 2 and change row color
                 if (status === "Selected for Interview") {
@@ -108,12 +135,15 @@ function handleUpdateStatus(e) {
                     rowData[10] = status; // Update the status in the row data to "Selected for Interview"
 
                     // Append the row data to Sheet 2 with additional columns
-                    sheet2.appendRow([
-                        ...rowData.slice(0, 11), // Original row data (columns A to K)
-                        statusChangedDate, // Status Changed Date (column L)
-                        "", // Rejected Status (column M, empty for now)
-                        "" // Rejected Date (column N, empty for now)
-                    ]);
+                    const newRow = sheet2.getLastRow() + 1;
+                    sheet2.getRange(newRow, 1, 1, 11).setValues([rowData.slice(0, 11)]);
+                    
+                    // Set status changed date with proper format
+                    sheet2.getRange(newRow, 12).setValue(statusChangedDate).setNumberFormat("dd/MM/yyyy");
+                    
+                    // Initialize empty rejected status and date
+                    sheet2.getRange(newRow, 13).setValue("");
+                    sheet2.getRange(newRow, 14).setValue("");
 
                     // Change row color in Sheet1 (light green for interview selection)
                     const rowRange = sheet1.getRange(i + 1, 1, 1, sheet1.getLastColumn()); // Entire row
@@ -133,17 +163,18 @@ function handleUpdateStatus(e) {
         if (status === "Rejected") {
             const sheet2Range = sheet2.getDataRange();
             const sheet2Values = sheet2Range.getValues();
+            const rejectedDate = new Date(); // Current date as Date object
 
             for (let i = 1; i < sheet2Values.length; i++) {
                 const rowJobTitle = sheet2Values[i][1]; // Job Title is in column B (index 1)
                 const rowCompanyName = sheet2Values[i][2]; // Company Name is in column C (index 2)
 
                 if (rowJobTitle === jobTitle && rowCompanyName === companyName) {
-                    const rejectedDate = new Date().toLocaleDateString(); // Current date
-
-                    // Update the Rejected Status and Rejected Date in Sheet 2
+                    // Update the Rejected Status and Rejected Date in Sheet 2 with proper date format
                     sheet2.getRange(i + 1, 13).setValue("Rejected"); // Rejected Status in column M
-                    sheet2.getRange(i + 1, 14).setValue(rejectedDate); // Rejected Date in column N
+                    sheet2.getRange(i + 1, 14)
+                        .setValue(rejectedDate)
+                        .setNumberFormat("dd/MM/yyyy"); // Rejected Date in column N
                     break;
                 }
             }
@@ -153,250 +184,5 @@ function handleUpdateStatus(e) {
     } catch (error) {
         Logger.log("Error: " + error.message);
         return ContentService.createTextOutput("Error: " + error.message);
-    }
-}
-
-//below are the test functions to check weather the code is working before deployment
-function testDoPost() {
-  // Sample data to simulate a POST request
-  const sampleData = {
-    jobTitle: "Software Engineer",
-    companyName: "Google",
-    recruiterName: "John Doe",
-    recruiterLinkedIn: "https://linkedin.com/in/johndoe",
-    website: "linkedin.com",
-    applicationStatus: "Applied",
-    appliedDate: "10/25/2023"
-  };
-
-  // Simulate the POST request
-  const e = {
-    postData: {
-      contents: JSON.stringify(sampleData), // Convert sample data to JSON string
-      type: "application/json"
-    }
-  };
-
-  // Call the doPost function with the simulated request
-  const result = doPost(e);
-
-  // Log the result
-  Logger.log(result.getContent());
-}
-
-function testUpdateStatus() {
-    // Simulate the payload for updating the status
-    const payload = {
-        jobTitle: "Software Engineer", // Replace with an existing job title in your sheet
-        companyName: "Tech Corp", // Replace with an existing company name in your sheet
-        status: "Selected for Interview" // New status to update
-    };
-
-    // Convert the payload to a JSON string
-    const jsonPayload = JSON.stringify(payload);
-
-    // Simulate a POST request
-    const mockRequest = {
-        postData: {
-            contents: jsonPayload,
-            type: "application/json"
-        },
-        pathInfo: "updateStatus" // Ensure this matches the path in your doPost function
-    };
-
-    // Call the doPost function with the mock request
-    const response = doPost(mockRequest);
-
-    // Log the response
-    Logger.log("Response from doPost: " + response.getContent());
-}
-
-function testUpdateStatusMultiple() {
-    // Simulate the payload for updating the status
-    const payload = {
-        jobTitle: "Software Engineer", // Replace with an existing job title in your sheet
-        companyName: "Tech Corp", // Replace with an existing company name in your sheet
-        status: "Selected for Interview" // New status to update
-    };
-
-    // Convert the payload to a JSON string
-    const jsonPayload = JSON.stringify(payload);
-
-    // Simulate a POST request
-    const mockRequest = {
-        postData: {
-            contents: jsonPayload,
-            type: "application/json"
-        },
-        pathInfo: "updateStatus" // Ensure this matches the path in your doPost function
-    };
-
-    // Call the doPost function with the mock request
-    const response = doPost(mockRequest);
-
-    // Log the response
-    Logger.log("Response from doPost: " + response.getContent());
-
-    // Verify the updated status in the sheet
-    const sheetId = "SHEET_ID"; // Replace with your actual sheet ID
-    const sheetName = "Sheet1"; // Replace with your sheet name
-    const sheet = SpreadsheetApp.openById(sheetId).getSheetByName(sheetName);
-
-    if (!sheet) {
-        Logger.log("Sheet not found. Please check the sheet name.");
-        return;
-    }
-
-    const range = sheet.getDataRange();
-    const values = range.getValues();
-
-    // Log all rows with the same job title and company name
-    Logger.log("Rows with job title '" + payload.jobTitle + "' and company name '" + payload.companyName + "':");
-    for (let i = 1; i < values.length; i++) {
-        const rowJobTitle = values[i][1]; // Job Title is in column B (index 1)
-        const rowCompanyName = values[i][2]; // Company Name is in column C (index 2)
-        const rowStatus = values[i][10]; // Status is in column K (index 10)
-
-        if (rowJobTitle === payload.jobTitle && rowCompanyName === payload.companyName) {
-            Logger.log("Row " + i + ": Status = " + rowStatus);
-        }
-    }
-}
-
-function testUpdateStatustest() {
-    // Simulate the payload for updating the status
-    const payload = {
-        jobTitle: "Software Engineer", // Replace with an existing job title in your sheet
-        companyName: "Akshay", // Replace with an existing company name in your sheet
-        status: "Selected for Interview" // New status to update
-    };
-
-    // Convert the payload to a JSON string
-    const jsonPayload = JSON.stringify(payload);
-
-    // Simulate a POST request
-    const mockRequest = {
-        postData: {
-            contents: jsonPayload,
-            type: "application/json"
-        },
-        pathInfo: "updateStatus" // Ensure this matches the path in your doPost function
-    };
-
-    // Call the doPost function with the mock request
-    const response = doPost(mockRequest);
-
-    // Log the response
-    Logger.log("Response from doPost: " + response.getContent());
-
-    // Verify the updated status in Sheet 1 and Sheet 2
-    const sheetId = "SHEET_ID"; // Replace with your actual sheet ID
-    const sheet1 = SpreadsheetApp.openById(sheetId).getSheetByName("Sheet1");
-    const sheet2 = SpreadsheetApp.openById(sheetId).getSheetByName("Sheet2");
-
-    if (!sheet1 || !sheet2) {
-        Logger.log("Sheet not found. Please check the sheet names.");
-        return;
-    }
-
-    // Log all rows in Sheet 1 with the same job title and company name
-    Logger.log("Rows in Sheet 1 with job title '" + payload.jobTitle + "' and company name '" + payload.companyName + "':");
-    const sheet1Range = sheet1.getDataRange();
-    const sheet1Values = sheet1Range.getValues();
-    for (let i = 1; i < sheet1Values.length; i++) {
-        const rowJobTitle = sheet1Values[i][1]; // Job Title is in column B (index 1)
-        const rowCompanyName = sheet1Values[i][2]; // Company Name is in column C (index 2)
-        const rowStatus = sheet1Values[i][10]; // Status is in column K (index 10)
-
-        if (rowJobTitle === payload.jobTitle && rowCompanyName === payload.companyName) {
-            Logger.log("Row " + i + ": Status = " + rowStatus);
-        }
-    }
-
-    // Log all rows in Sheet 2 with the same job title and company name
-    Logger.log("Rows in Sheet 2 with job title '" + payload.jobTitle + "' and company name '" + payload.companyName + "':");
-    const sheet2Range = sheet2.getDataRange();
-    const sheet2Values = sheet2Range.getValues();
-    for (let i = 1; i < sheet2Values.length; i++) {
-        const rowJobTitle = sheet2Values[i][1]; // Job Title is in column B (index 1)
-        const rowCompanyName = sheet2Values[i][2]; // Company Name is in column C (index 2)
-        const rowStatus = sheet2Values[i][10]; // Status is in column K (index 10)
-        const statusChangedDate = sheet2Values[i][11]; // Status Changed Date is in column L (index 11)
-        const rejectedStatus = sheet2Values[i][12]; // Rejected Status is in column M (index 12)
-        const rejectedDate = sheet2Values[i][13]; // Rejected Date is in column N (index 13)
-
-        if (rowJobTitle === payload.jobTitle && rowCompanyName === payload.companyName) {
-            Logger.log("Row " + i + ": Status = " + rowStatus + ", Status Changed Date = " + statusChangedDate + ", Rejected Status = " + rejectedStatus + ", Rejected Date = " + rejectedDate);
-        }
-    }
-}
-
-
-function testUpdateStatus11() {
-    // Simulate the payload for updating the status
-    const payload = {
-        jobTitle: "Software Engineer", // Replace with an existing job title in your sheet
-        companyName: "Tech Corp", // Replace with an existing company name in your sheet
-        status: "Rejected" // New status to update
-    };
-
-    // Convert the payload to a JSON string
-    const jsonPayload = JSON.stringify(payload);
-
-    // Simulate a POST request
-    const mockRequest = {
-        postData: {
-            contents: jsonPayload,
-            type: "application/json"
-        },
-        pathInfo: "updateStatus" // Ensure this matches the path in your doPost function
-    };
-
-    // Call the doPost function with the mock request
-    const response = doPost(mockRequest);
-
-    // Log the response
-    Logger.log("Response from doPost: " + response.getContent());
-
-    // Verify the updated status in Sheet 1 and Sheet 2
-    const sheetId = "109OwmlyQyvcmYcysWt2dW5TuEDefx9n-vSHVxAzh5jo"; // Replace with your actual sheet ID
-    const sheet1 = SpreadsheetApp.openById(sheetId).getSheetByName("Sheet1");
-    const sheet2 = SpreadsheetApp.openById(sheetId).getSheetByName("Sheet2");
-
-    if (!sheet1 || !sheet2) {
-        Logger.log("Sheet not found. Please check the sheet names.");
-        return;
-    }
-
-    // Log all rows in Sheet 1 with the same job title and company name
-    Logger.log("Rows in Sheet 1 with job title '" + payload.jobTitle + "' and company name '" + payload.companyName + "':");
-    const sheet1Range = sheet1.getDataRange();
-    const sheet1Values = sheet1Range.getValues();
-    for (let i = 1; i < sheet1Values.length; i++) {
-        const rowJobTitle = sheet1Values[i][1]; // Job Title is in column B (index 1)
-        const rowCompanyName = sheet1Values[i][2]; // Company Name is in column C (index 2)
-        const rowStatus = sheet1Values[i][10]; // Status is in column K (index 10)
-        const statusChangedDate = sheet1Values[i][11]; // Status Changed Date is in column L (index 11)
-
-        if (rowJobTitle === payload.jobTitle && rowCompanyName === payload.companyName) {
-            Logger.log("Row " + i + ": Status = " + rowStatus + ", Status Changed Date = " + statusChangedDate);
-        }
-    }
-
-    // Log all rows in Sheet 2 with the same job title and company name
-    Logger.log("Rows in Sheet 2 with job title '" + payload.jobTitle + "' and company name '" + payload.companyName + "':");
-    const sheet2Range = sheet2.getDataRange();
-    const sheet2Values = sheet2Range.getValues();
-    for (let i = 1; i < sheet2Values.length; i++) {
-        const rowJobTitle = sheet2Values[i][1]; // Job Title is in column B (index 1)
-        const rowCompanyName = sheet2Values[i][2]; // Company Name is in column C (index 2)
-        const rowStatus = sheet2Values[i][10]; // Status is in column K (index 10)
-        const statusChangedDate = sheet2Values[i][11]; // Status Changed Date is in column L (index 11)
-        const rejectedStatus = sheet2Values[i][12]; // Rejected Status is in column M (index 12)
-        const rejectedDate = sheet2Values[i][13]; // Rejected Date is in column N (index 13)
-
-        if (rowJobTitle === payload.jobTitle && rowCompanyName === payload.companyName) {
-            Logger.log("Row " + i + ": Status = " + rowStatus + ", Status Changed Date = " + statusChangedDate + ", Rejected Status = " + rejectedStatus + ", Rejected Date = " + rejectedDate);
-        }
     }
 }

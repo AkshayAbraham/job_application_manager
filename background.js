@@ -106,6 +106,7 @@ function resetJobData() {
 }
 
 function saveToSheets(data, callback) {
+    console.log("🔹 Data being sent to Google Sheets:", data); // Debug log
     fetch("MY_WEBAPP_URL", {
         method: "POST",
         body: JSON.stringify(data),
@@ -114,10 +115,12 @@ function saveToSheets(data, callback) {
     .then(response => response.text())
     .then(data => {
         console.log("Saved:", data);
+        console.log("✅ Google Sheets Response:", data); // Log response
         callback(true);
     })
     .catch(error => {
         console.error("Error:", error);
+        console.error("❌ Error saving to Google Sheets:", error);
         callback(false);
     });
 }
